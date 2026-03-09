@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIXELZONE — Connexion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/connexion.css">
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="pixel-grid"></div>
+  <div class="pixel-field" id="pixelField"></div>
+  <div class="scanlines"></div>
+
+  <!-- Curseur -->
+  <div class="cursor" id="cursor"></div>
+
+  <!-- Lien retour -->
+  <a href="../index.html" class="back-link">‹ RETOUR</a>
+
+  <!-- Page -->
+  <main class="auth-page">
+    <div class="auth-card">
+
+      <a href="../index.html" class="auth-logo">PIXELZONE</a>
+      <p class="auth-subtitle">Connecte-toi pour jouer et sauvegarder tes scores.</p>
+
+      <!-- Formulaire -->
+      <form class="auth-form" id="loginForm" action="traitement_connexion.php" method="POST">
+
+        <div class="field-group">
+          <label class="field-label" for="email">EMAIL</label>
+          <div class="field-wrap">
+            <span class="field-icon">@</span>
+            <input type="email" id="email" name="email" class="field-input"
+              placeholder="ton@email.com" autocomplete="email" required>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="password">MOT DE PASSE</label>
+          <div class="field-wrap">
+            <span class="field-icon">🔒</span>
+            <input type="password" id="password" name="password" class="field-input"
+              placeholder="••••••••" autocomplete="current-password" required>
+            <button type="button" class="field-toggle" id="togglePwd" aria-label="Voir">👁</button>
+          </div>
+        </div>
+
+        <div class="field-options">
+          <label class="checkbox-wrap">
+            <input type="checkbox" name="remember" id="remember">
+            <span class="checkbox-custom"></span>
+            <span class="checkbox-label">Se souvenir de moi</span>
+          </label>
+          <a href="mot_de_passe_oublie.html" class="link-forgot">Mot de passe oublié ?</a>
+        </div>
+
+        <button type="submit" class="btn-auth" id="submitBtn">
+          <span class="btn-auth__text">▶ SE CONNECTER</span>
+          <span class="btn-auth__loading" hidden>⏳ CONNEXION...</span>
+        </button>
+
+      </form>
+
+      <div class="auth-sep"><span>ou</span></div>
+
+      <a href="accueil.html" class="btn-guest">→ Continuer en tant qu'invité</a>
+
+      <p class="auth-switch">
+        Pas encore de compte ?
+        <a href="inscription.html" class="auth-switch__link">Créer un compte</a>
+      </p>
+
+    </div>
+  </main>
+
+  <script src="../js/script.js"></script>
+  <script src="../js/connexion.js"></script>
+</body>
+</html>
