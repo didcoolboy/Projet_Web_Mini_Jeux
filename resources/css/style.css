@@ -1,0 +1,334 @@
+/* ═══════════════════════════════════════════════
+   PIXELZONE — style.css
+═══════════════════════════════════════════════ */
+
+/* ── Variables globales ── */
+:root {
+  --bg:       #05050f;
+  --surface:  #0c0c1e;
+  --border:   #1a1a3e;
+  --neon-g:   #00ff88;
+  --neon-b:   #00d4ff;
+  --neon-p:   #bf00ff;
+  --neon-y:   #ffdd00;
+  --neon-r:   #ff3366;
+  --text:     #e8e8ff;
+  --muted:    #5a5a8a;
+}
+
+/* ── Reset ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+  overflow: hidden;
+  cursor: none;
+}
+
+/* ═══════════════════════════════════════════════
+   CURSEUR PRINCIPAL
+═══════════════════════════════════════════════ */
+.cursor {
+  position: fixed;
+  width: 14px;
+  height: 14px;
+  background: var(--neon-g);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, background 0.2s, box-shadow 0.2s;
+  clip-path: polygon(
+    0 25%, 25% 25%, 25% 0,
+    75% 0, 75% 25%, 100% 25%,
+    100% 75%, 75% 75%, 75% 100%,
+    25% 100%, 25% 75%, 0 75%
+  );
+  box-shadow:
+    0 0 8px  var(--neon-g),
+    0 0 20px rgba(0,255,136,0.6),
+    0 0 40px rgba(0,255,136,0.3);
+}
+
+/* ═══════════════════════════════════════════════
+   TRAÎNÉE — CARRÉS FANTÔMES
+═══════════════════════════════════════════════ */
+.cursor-trail {
+  position: fixed;
+  background: var(--neon-g);
+  pointer-events: none;
+  z-index: 9997;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 6px currentColor;
+}
+
+/* ═══════════════════════════════════════════════
+   FOND — GRILLE PIXEL
+═══════════════════════════════════════════════ */
+.pixel-grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0,255,136,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,255,136,0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   FOND — PIXELS FLOTTANTS
+═══════════════════════════════════════════════ */
+.pixel-field {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.px {
+  position: absolute;
+  animation: floatPx linear infinite;
+  opacity: 0;
+}
+
+@keyframes floatPx {
+  0%   { transform: translateY(100vh); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.5; }
+  100% { transform: translateY(-10vh); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════
+   FOND — SCANLINES
+═══════════════════════════════════════════════ */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.12) 2px,
+    rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 9000;
+  animation: scanMove 10s linear infinite;
+}
+
+@keyframes scanMove {
+  from { background-position: 0 0; }
+  to   { background-position: 0 40px; }
+}
+
+/* ═══════════════════════════════════════════════
+   ORBES DE LUMIÈRE
+═══════════════════════════════════════════════ */
+.welcome::before {
+  content: '';
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  background: radial-gradient(circle, rgba(0,255,136,0.07) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -60%);
+  pointer-events: none;
+  animation: orbPulse 5s ease-in-out infinite alternate;
+}
+
+.welcome::after {
+  content: '';
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(191,0,255,0.05) 0%, transparent 70%);
+  bottom: 10%; left: 15%;
+  pointer-events: none;
+  animation: orbDrift 8s ease-in-out infinite alternate;
+}
+
+@keyframes orbPulse {
+  from { opacity: 0.6; transform: translate(-50%, -60%) scale(1); }
+  to   { opacity: 1;   transform: translate(-50%, -60%) scale(1.1); }
+}
+
+@keyframes orbDrift {
+  from { transform: translate(0, 0); }
+  to   { transform: translate(60px, -40px); }
+}
+
+/* ═══════════════════════════════════════════════
+   WELCOME
+═══════════════════════════════════════════════ */
+.welcome {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+
+.welcome-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.welcome-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--neon-y);
+  letter-spacing: 3px;
+  border: 1px solid rgba(255,221,0,0.3);
+  padding: 8px 18px;
+  animation: fadeUp 0.5s ease both;
+  animation-delay: 0.1s;
+}
+
+.welcome-logo {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(32px, 7vw, 72px);
+  line-height: 1.2;
+  background: linear-gradient(135deg, var(--neon-g) 0%, var(--neon-b) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 30px rgba(0,255,136,0.5));
+  animation: fadeUp 0.5s ease both, logoPulse 4s ease-in-out infinite;
+  animation-delay: 0.25s, 0.8s;
+}
+
+@keyframes logoPulse {
+  0%, 100% { filter: drop-shadow(0 0 30px rgba(0,255,136,0.5)); }
+  50%       { filter: drop-shadow(0 0 60px rgba(0,212,255,0.8)); }
+}
+
+.welcome-sub {
+  font-size: clamp(13px, 2vw, 16px);
+  color: var(--muted);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  animation: fadeUp 0.5s ease both;
+  animation-delay: 0.4s;
+}
+
+.btn-enter {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(10px, 1.5vw, 13px);
+  padding: 20px 44px;
+  background: var(--neon-g);
+  color: #000;
+  text-decoration: none;
+  letter-spacing: 2px;
+  display: inline-block;
+  clip-path: polygon(
+    0 0, calc(100% - 14px) 0, 100% 14px,
+    100% 100%, 14px 100%, 0 calc(100% - 14px)
+  );
+  box-shadow:
+    0 0 30px rgba(0,255,136,0.5),
+    inset 0 0 20px rgba(255,255,255,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: fadeUp 0.5s ease both, btnGlow 2.5s ease-in-out infinite;
+  animation-delay: 0.55s, 0.8s;
+}
+
+.btn-enter:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow:
+    0 0 60px rgba(0,255,136,0.85),
+    inset 0 0 30px rgba(255,255,255,0.15);
+}
+
+@keyframes btnGlow {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(0,255,136,0.5), inset 0 0 20px rgba(255,255,255,0.1);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(0,255,136,0.8), inset 0 0 30px rgba(255,255,255,0.15);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   ANIMATIONS GÉNÉRALES
+═══════════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .welcome-label { font-size: 7px; letter-spacing: 2px; }
+  .btn-enter     { padding: 16px 28px; }
+}
+
+/* ═══════════════════════════════════════════════
+   OPTIONS SOUS LE BOUTON PRINCIPAL
+═══════════════════════════════════════════════ */
+.welcome-options {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  animation: fadeUp 0.5s 0.7s ease both;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.welcome-opt-link {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  letter-spacing: 0.03em;
+  transition: color .2s;
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.welcome-opt-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .25s;
+}
+
+.welcome-opt-link:hover { color: var(--neon-g); }
+.welcome-opt-link:hover::after { transform: scaleX(1); }
+
+.welcome-opt-link--muted:hover { color: var(--text); }
+
+.welcome-opt-icon {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.welcome-opt-sep {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: var(--border);
+  letter-spacing: 2px;
+}
