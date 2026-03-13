@@ -39,26 +39,28 @@ class AuthController extends Controller
     }
 
     public function inscription(Request $request)
-{
-    $request->validate([
-        'nom'      => 'required|string|max:50',
-        'prenom'   => 'required|string|max:50',
-        'email'    => 'required|email|unique:users',
-        'password' => 'required|min:6',
-    ]);
+    {
+        $request->validate([
+            'nom'      => 'required|string|max:50',
+            'prenom'   => 'required|string|max:50',
+            'pseudo'   => 'required|string|max:50|unique:users',
+            'email'    => 'required|email|unique:users',
+            'password' => 'required|min:6',
+        ]);
 
-    $user = User::create([
-        'nom'      => $request->nom,
-        'prenom'   => $request->prenom,
-        'email'    => $request->email,
-        'password' => Hash::make($request->password),
-        'role'     => 'joueur',
-    ]);
+        $user = User::create([
+            'nom'      => $request->nom,
+            'prenom'   => $request->prenom,
+            'pseudo'   => $request->pseudo,
+            'email'    => $request->email,
+            'password' => Hash::make($request->password),
+            'role'     => 'joueur',
+        ]);
 
-    Auth::login($user);
+        Auth::login($user);
 
-    return redirect()->route('accueil');
-}
+        return redirect()->route('accueil');
+    }
 
     public function deconnexion(Request $request)
     {
