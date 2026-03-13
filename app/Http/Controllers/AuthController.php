@@ -69,4 +69,10 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('welcome');
     }
+
+    public function showInvite()
+{
+    $topScores = collect();
+    return view('auth.invite', compact('topScores'));
+}
 }

@@ -67,7 +67,7 @@
 
             <div class="auth-sep"><span>ou</span></div>
 
-            <a href="{{ route('accueil') }}" class="btn-guest">→ Continuer en tant qu'invité</a>
+            <a href="{{ route('accueil.invite') }}" class="btn-guest">→ Continuer en tant qu'invité</a>
 
             <p class="auth-switch">
                 Pas encore de compte ?

@@ -1,0 +1,329 @@
+/* ═══════════════════════════════════════════════
+   PIXELZONE — invite.css
+═══════════════════════════════════════════════ */
+
+body { overflow: auto; }
+
+/* ── Page wrapper ── */
+.invite-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    animation: fadeUp .4s ease both;
+}
+
+/* ── Bannière invité ── */
+.guest-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: linear-gradient(90deg, rgba(255,209,102,0.10), rgba(255,209,102,0.03));
+    border: 1px solid rgba(255,209,102,0.35);
+    border-radius: 6px;
+    padding: .75rem 1.25rem;
+    margin-bottom: 2.5rem;
+    font-size: .82rem;
+    color: #ffd166;
+    letter-spacing: .03em;
+    animation: fadeUp .4s .1s ease both;
+}
+.guest-banner span { flex: 1; }
+.guest-banner strong { font-weight: 800; }
+.banner-actions {
+    display: flex;
+    gap: .6rem;
+    flex-shrink: 0;
+}
+.btn-banner {
+    padding: .35rem .9rem;
+    border-radius: 4px;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity .15s;
+    font-family: 'Press Start 2P', monospace;
+}
+.btn-banner:hover { opacity: .75; }
+.btn-banner--outline {
+    border: 1px solid #ffd166;
+    color: #ffd166;
+    background: transparent;
+}
+.btn-banner--fill {
+    background: #ffd166;
+    color: #0a0a0f;
+    border: 1px solid #ffd166;
+}
+
+/* ── Header ── */
+.guest-header {
+    text-align: center;
+    margin-bottom: 2rem;
+    animation: fadeUp .4s .15s ease both;
+}
+.guest-header h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    color: #fff;
+    margin: 0 0 .5rem;
+    letter-spacing: .08em;
+    background: linear-gradient(135deg, var(--neon-g), var(--neon-b));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+.guest-header p {
+    color: var(--muted);
+    font-size: .83rem;
+    letter-spacing: .03em;
+}
+
+/* ── Titre de section ── */
+.section-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .6rem;
+    font-weight: 700;
+    letter-spacing: .14em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+}
+.section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+}
+
+/* ── Grille jeux ── */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.1rem;
+    margin-bottom: 2.5rem;
+    animation: fadeUp .4s .2s ease both;
+}
+.game-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+    cursor: pointer;
+    text-decoration: none;
+    display: block;
+}
+.game-card:hover {
+    border-color: var(--neon-g);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0,255,136,0.08);
+}
+.game-card__thumb {
+    width: 100%;
+    aspect-ratio: 16/9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.8rem;
+    background: var(--bg);
+}
+.game-card__body {
+    padding: .85rem 1rem;
+}
+.game-card__title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .65rem;
+    font-weight: 800;
+    letter-spacing: .06em;
+    color: #fff;
+    margin: 0 0 .4rem;
+}
+.game-card__desc {
+    font-size: .75rem;
+    color: var(--muted);
+    margin: 0 0 .75rem;
+    line-height: 1.6;
+}
+.game-card__badge {
+    display: inline-block;
+    padding: .2rem .6rem;
+    border-radius: 3px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: .5rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    background: rgba(0,255,136,0.08);
+    color: var(--neon-g);
+    border: 1px solid rgba(0,255,136,0.2);
+}
+
+/* ── Classement ── */
+.leaderboard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2.5rem;
+    animation: fadeUp .4s .25s ease both;
+}
+.leaderboard__row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .8rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-size: .85rem;
+    transition: background .15s;
+}
+.leaderboard__row:hover { background: rgba(255,255,255,0.02); }
+.leaderboard__row:last-child { border-bottom: none; }
+.leaderboard__empty {
+    justify-content: center;
+    color: var(--muted);
+    font-size: .8rem;
+    letter-spacing: .04em;
+}
+.leaderboard__rank {
+    width: 1.8rem;
+    font-family: 'Press Start 2P', monospace;
+    font-size: .6rem;
+    color: var(--muted);
+    flex-shrink: 0;
+}
+.leaderboard__rank.gold   { color: #ffd700; }
+.leaderboard__rank.silver { color: #c0c0c0; }
+.leaderboard__rank.bronze { color: #cd7f32; }
+.leaderboard__avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Press Start 2P', monospace;
+    font-size: .55rem;
+    color: var(--neon-g);
+    flex-shrink: 0;
+}
+.leaderboard__name {
+    flex: 1;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: .03em;
+}
+.leaderboard__game {
+    font-size: .7rem;
+    color: var(--muted);
+    letter-spacing: .04em;
+}
+.leaderboard__score {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .65rem;
+    font-weight: 800;
+    color: var(--neon-g);
+    letter-spacing: .04em;
+}
+
+/* ── CTA bas de page ── */
+.guest-cta {
+    text-align: center;
+    padding: 2.5rem 2rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    animation: fadeUp .4s .3s ease both;
+}
+.guest-cta h2 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: clamp(.7rem, 2vw, 1rem);
+    color: #fff;
+    margin: 0 0 .6rem;
+    letter-spacing: .08em;
+}
+.guest-cta p {
+    font-size: .82rem;
+    color: var(--muted);
+    margin: 0 0 1.5rem;
+    line-height: 1.6;
+}
+.guest-cta__btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: .75rem;
+    flex-wrap: wrap;
+}
+
+/* ── Score flash ── */
+.score-flash {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--neon-g);
+    border-radius: 8px;
+    padding: 1.1rem 1.4rem;
+    z-index: 999;
+    min-width: 230px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.5), 0 0 20px rgba(0,255,136,0.1);
+    animation: fadeUp .35s ease both;
+}
+.score-flash__close {
+    position: absolute;
+    top: .5rem;
+    right: .75rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: .9rem;
+    padding: 4px;
+    transition: color .2s;
+}
+.score-flash__close:hover { color: var(--text); }
+.score-flash__label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: .55rem;
+    color: var(--neon-g);
+    letter-spacing: .1em;
+    margin-bottom: .4rem;
+}
+.score-flash__value {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.4rem;
+    color: #fff;
+    letter-spacing: .05em;
+}
+.score-flash__note {
+    font-size: .72rem;
+    color: var(--muted);
+    margin-top: .4rem;
+    line-height: 1.5;
+}
+.score-flash__note a {
+    color: var(--neon-g);
+    text-decoration: none;
+}
+.score-flash__note a:hover { color: var(--neon-b); }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .guest-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: .75rem;
+    }
+    .guest-cta__btns { flex-direction: column; }
+    .games-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 400px) {
+    .games-grid { grid-template-columns: 1fr; }
+}

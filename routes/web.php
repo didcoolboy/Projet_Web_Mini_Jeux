@@ -17,6 +17,8 @@ Route::post('/connexion', [AuthController::class, 'connexion'])->name('connexion
 Route::get('/inscription', [AuthController::class, 'showInscription'])->name('inscription');
 Route::post('/inscription', [AuthController::class, 'inscription'])->name('inscription.post');
 
+Route::get('/invite', [AuthController::class, 'showInvite'])->name('accueil.invite');
+
 Route::get('/mot-de-passe-oublie', function () {
     return view('auth.mot_de_passe_oublie');
 })->name('mot_de_passe_oublie');
