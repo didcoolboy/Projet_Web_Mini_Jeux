@@ -59,6 +59,11 @@ class AuthController extends Controller
 
         Auth::login($user);
 
+        // Rediriger vers la page invité si venu de là
+        if ($request->query('from') === 'invite') {
+            return redirect()->route('accueil.invite');
+        }
+
         return redirect()->route('accueil');
     }
 

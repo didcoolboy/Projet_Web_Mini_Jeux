@@ -13,7 +13,7 @@
          NAVBAR
     ══════════════════════════════ -->
     <nav class="navbar">
-        <a href="{{ route('welcome') }}" class="nav-logo">PIXELZONE</a>
+        <a href="{{ route('inscription') }}" class="nav-logo">PIXELZONE</a>
 
         <ul class="nav-links">
             <li><a href="#jeux" class="nav-link active">Jeux</a></li>
@@ -31,13 +31,6 @@
         </button>
     </nav>
 
-    <!-- Bannière invité -->
-    <div class="guest-banner">
-        <span>⚠️ Mode invité — Tes scores ne seront <strong>pas sauvegardés</strong>. Crée un compte pour apparaître au classement !</span>
-        <div class="banner-actions">
-            <a href="{{ route('connexion') }}" class="btn-banner btn-banner--outline">Connexion</a>
-            <a href="{{ route('inscription') }}" class="btn-banner btn-banner--fill">S'inscrire</a>
-        </div>
     </div>
 
     <!-- ══════════════════════════════
@@ -55,14 +48,51 @@
             </h1>
             <p class="hero-sub">Accède à tous les mini-jeux gratuitement. Crée un compte pour sauvegarder tes scores et grimper dans le classement.</p>
             <div class="hero-cta">
-                <a href="#jeux" class="btn-primary">▶ VOIR LES JEUX</a>
+                <a href="#comment" class="btn-primary">▶ VOIR LES JEUX</a>
                 <a href="{{ route('inscription') }}" class="btn-ghost">📝 CRÉER UN COMPTE</a>
             </div>
         </div>
+    </section>
 
-        <div class="hero-scroll">
-            <span>SCROLL</span>
-            <div class="hero-scroll__arrow"></div>
+    <!-- ══════════════════════════════
+         COMMENT ÇA MARCHE
+    ══════════════════════════════ -->
+    <section class="section" id="comment">
+        <div class="section-head">
+            <div>
+                <p class="section-tag">// TUTORIEL</p>
+                <h2 class="section-title">Comment ça marche ?</h2>
+            </div>
+        </div>
+
+        <div class="how-grid">
+            <div class="how-card" style="--hc: var(--neon-b)">
+                <div class="how-card__num">01</div>
+                <div class="how-card__icon">📝</div>
+                <h3 class="how-card__title">Crée ton compte</h3>
+                <p class="how-card__desc">Inscris-toi gratuitement en quelques secondes. Aucune carte de crédit requise.</p>
+                <div class="how-card__arrow">›</div>
+            </div>
+            <div class="how-card" style="--hc: var(--neon-g)">
+                <div class="how-card__num">02</div>
+                <div class="how-card__icon">🎮</div>
+                <h3 class="how-card__title">Choisis un jeu</h3>
+                <p class="how-card__desc">Parcours le catalogue et lance-toi directement dans le navigateur, sans installation.</p>
+                <div class="how-card__arrow">›</div>
+            </div>
+            <div class="how-card" style="--hc: var(--neon-y)">
+                <div class="how-card__num">03</div>
+                <div class="how-card__icon">⚡</div>
+                <h3 class="how-card__title">Joue & performe</h3>
+                <p class="how-card__desc">Ton score s'affiche à la fin de la partie. Crée un compte pour le sauvegarder.</p>
+                <div class="how-card__arrow">›</div>
+            </div>
+            <div class="how-card" style="--hc: var(--neon-p)">
+                <div class="how-card__num">04</div>
+                <div class="how-card__icon">👑</div>
+                <h3 class="how-card__title">Domine le classement</h3>
+                <p class="how-card__desc">Compare tes scores avec la communauté et affiche ton rang dans le top mondial.</p>
+            </div>
         </div>
     </section>
 
@@ -75,9 +105,10 @@
                 <p class="section-tag">// CATALOGUE</p>
                 <h2 class="section-title">Jeux disponibles</h2>
             </div>
+            <a href="#" class="section-more">VOIR PLUS DE JEUX ›</a>
         </div>
 
-        <div class="games-grid">
+        <div class="games-grid games-grid--4col">
 
             <div class="game-card" data-color="#00ff88">
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#001a0a,#002a10)">
@@ -166,7 +197,6 @@
         </div>
 
         <div class="lb-wrap">
-            <!-- Podium top 3 -->
             @if(count($topScores) >= 3)
             <div class="podium">
                 <div class="podium-card podium-card--2">
@@ -194,7 +224,6 @@
             </div>
             @endif
 
-            <!-- Suite du classement -->
             <div class="lb-table">
                 <div class="lb-table__head">
                     <span>RANG</span>
@@ -215,7 +244,6 @@
                 </div>
                 @endforelse
 
-                <!-- Ligne invité -->
                 <div class="lb-row lb-row--you">
                     <span class="lb-row__rank">??</span>
                     <span class="lb-row__player"><span class="lb-row__avatar">😎</span> Toi ?</span>
@@ -224,48 +252,6 @@
                         <a href="{{ route('inscription') }}" style="color:var(--neon-g);text-decoration:none;">Inscris-toi !</a>
                     </span>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ══════════════════════════════
-         COMMENT ÇA MARCHE
-    ══════════════════════════════ -->
-    <section class="section" id="comment">
-        <div class="section-head">
-            <div>
-                <p class="section-tag">// TUTORIEL</p>
-                <h2 class="section-title">Comment ça marche ?</h2>
-            </div>
-        </div>
-
-        <div class="how-grid">
-            <div class="how-card" style="--hc: var(--neon-b)">
-                <div class="how-card__num">01</div>
-                <div class="how-card__icon">📝</div>
-                <h3 class="how-card__title">Crée ton compte</h3>
-                <p class="how-card__desc">Inscris-toi gratuitement en quelques secondes. Aucune carte de crédit requise.</p>
-                <div class="how-card__arrow">›</div>
-            </div>
-            <div class="how-card" style="--hc: var(--neon-g)">
-                <div class="how-card__num">02</div>
-                <div class="how-card__icon">🎮</div>
-                <h3 class="how-card__title">Choisis un jeu</h3>
-                <p class="how-card__desc">Parcours le catalogue et lance-toi directement dans le navigateur, sans installation.</p>
-                <div class="how-card__arrow">›</div>
-            </div>
-            <div class="how-card" style="--hc: var(--neon-y)">
-                <div class="how-card__num">03</div>
-                <div class="how-card__icon">⚡</div>
-                <h3 class="how-card__title">Joue & performe</h3>
-                <p class="how-card__desc">Ton score s'affiche à la fin de la partie. Crée un compte pour le sauvegarder.</p>
-                <div class="how-card__arrow">›</div>
-            </div>
-            <div class="how-card" style="--hc: var(--neon-p)">
-                <div class="how-card__num">04</div>
-                <div class="how-card__icon">👑</div>
-                <h3 class="how-card__title">Domine le classement</h3>
-                <p class="how-card__desc">Compare tes scores avec la communauté et affiche ton rang dans le top mondial.</p>
             </div>
         </div>
     </section>

@@ -8,7 +8,7 @@
 
 @section('content')
 
-    <a href="{{ route('welcome') }}" class="back-link">‹ RETOUR</a>
+    <a href="{{ route('connexion') }}" class="back-link">‹ RETOUR</a>
 
     <main class="auth-page">
         <div class="auth-card">
