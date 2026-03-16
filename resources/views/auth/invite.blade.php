@@ -16,9 +16,9 @@
         <a href="{{ route('inscription') }}" class="nav-logo">PIXELZONE</a>
 
         <ul class="nav-links">
-            <li><a href="#jeux" class="nav-link active">Jeux</a></li>
-            <li><a href="#classement" class="nav-link">Classement</a></li>
             <li><a href="#comment" class="nav-link">Comment ça marche</a></li>
+            <li><a href="#jeux" class="nav-link">Jeux</a></li>
+            <li><a href="#classement" class="nav-link">Classement</a></li>
         </ul>
 
         <div class="nav-actions">
