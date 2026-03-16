@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LeaderboardController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,3 +23,8 @@ Route::get('/mot-de-passe-oublie', function () {
 })->name('mot_de_passe_oublie');
 
 Route::post('/deconnexion', [AuthController::class, 'deconnexion'])->name('deconnexion');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/classement', [LeaderboardController::class, 'index'])
+         ->name('leaderboard.index');
+});
