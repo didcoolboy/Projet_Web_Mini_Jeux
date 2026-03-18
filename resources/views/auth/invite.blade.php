@@ -9,11 +9,9 @@
 
 @section('content')
 
-    <!-- ══════════════════════════════
-         NAVBAR
-    ══════════════════════════════ -->
+    <!-- NAVBAR -->
     <nav class="navbar">
-        <a href="{{ route('inscription') }}" class="nav-logo">PIXELZONE</a>
+        <a href="{{ route('welcome') }}" class="nav-logo">PIXELZONE</a>
 
         <ul class="nav-links">
             <li><a href="#comment" class="nav-link">Comment ça marche</a></li>
@@ -31,11 +29,7 @@
         </button>
     </nav>
 
-    </div>
-
-    <!-- ══════════════════════════════
-         HERO
-    ══════════════════════════════ -->
+    <!-- HERO -->
     <section class="hero">
         <div class="hero-orb hero-orb--green"></div>
         <div class="hero-orb hero-orb--purple"></div>
@@ -48,15 +42,13 @@
             </h1>
             <p class="hero-sub">Accède à tous les mini-jeux gratuitement. Crée un compte pour sauvegarder tes scores et grimper dans le classement.</p>
             <div class="hero-cta">
-                <a href="#comment" class="btn-primary">▶ VOIR LES JEUX</a>
+                <a href="#jeux" class="btn-primary">▶ VOIR LES JEUX</a>
                 <a href="{{ route('inscription') }}" class="btn-ghost">📝 CRÉER UN COMPTE</a>
             </div>
         </div>
     </section>
 
-    <!-- ══════════════════════════════
-         COMMENT ÇA MARCHE
-    ══════════════════════════════ -->
+    <!-- COMMENT ÇA MARCHE -->
     <section class="section" id="comment">
         <div class="section-head">
             <div>
@@ -96,16 +88,13 @@
         </div>
     </section>
 
-    <!-- ══════════════════════════════
-         JEUX
-    ══════════════════════════════ -->
+    <!-- JEUX -->
     <section class="section" id="jeux">
         <div class="section-head">
             <div>
                 <p class="section-tag">// CATALOGUE</p>
                 <h2 class="section-title">Jeux disponibles</h2>
             </div>
-            <a href="#" class="section-more">VOIR PLUS DE JEUX ›</a>
         </div>
 
         <div class="games-grid games-grid--4col">
@@ -114,13 +103,13 @@
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#001a0a,#002a10)">
                     <span class="game-card__emoji">🐍</span>
                     <div class="game-card__overlay">
-                        <a href="#" class="game-card__play">▶ JOUER</a>
+                        <a href="{{ route('jeux.snake') }}" class="game-card__play">▶ JOUER</a>
                     </div>
                 </div>
                 <div class="game-card__body">
                     <div class="game-card__meta">
                         <span class="game-card__tag" style="color:var(--neon-g);border-color:rgba(0,255,136,0.3)">ARCADE</span>
-                        <span class="game-card__players">👤 INVITÉ OK</span>
+                        <span class="game-card__players">👤 INVITÉ</span>
                     </div>
                     <h3 class="game-card__name">Snake</h3>
                     <p class="game-card__desc">Mange, grandis, survive. Le classique indémodable.</p>
@@ -132,13 +121,13 @@
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#00101a,#001825)">
                     <span class="game-card__emoji">🧠</span>
                     <div class="game-card__overlay">
-                        <a href="#" class="game-card__play">▶ JOUER</a>
+                        <a href="{{ route('jeux.memory') }}" class="game-card__play">▶ JOUER</a>
                     </div>
                 </div>
                 <div class="game-card__body">
                     <div class="game-card__meta">
                         <span class="game-card__tag" style="color:var(--neon-b);border-color:rgba(0,212,255,0.3)">MÉMOIRE</span>
-                        <span class="game-card__players">👤 INVITÉ OK</span>
+                        <span class="game-card__players">👤 INVITÉ</span>
                     </div>
                     <h3 class="game-card__name">Memory</h3>
                     <p class="game-card__desc">Retrouve toutes les paires le plus vite possible.</p>
@@ -146,35 +135,17 @@
                 <div class="game-card__glow" style="--gc: rgba(0,212,255,0.15)"></div>
             </div>
 
-            <div class="game-card" data-color="#ff3366">
-                <div class="game-card__screen" style="background:linear-gradient(135deg,#1a0010,#0d0008)">
-                    <span class="game-card__emoji">🔴</span>
-                    <div class="game-card__overlay">
-                        <a href="#" class="game-card__play">▶ JOUER</a>
-                    </div>
-                </div>
-                <div class="game-card__body">
-                    <div class="game-card__meta">
-                        <span class="game-card__tag" style="color:var(--neon-r);border-color:rgba(255,51,102,0.3)">STRATÉGIE</span>
-                        <span class="game-card__players">👤 INVITÉ OK</span>
-                    </div>
-                    <h3 class="game-card__name">Puissance 4</h3>
-                    <p class="game-card__desc">Aligne 4 jetons avant ton adversaire.</p>
-                </div>
-                <div class="game-card__glow" style="--gc: rgba(255,51,102,0.15)"></div>
-            </div>
-
             <div class="game-card" data-color="#ffdd00">
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#1a1400,#0d0b00)">
                     <span class="game-card__emoji">❌</span>
                     <div class="game-card__overlay">
-                        <a href="#" class="game-card__play">▶ JOUER</a>
+                        <a href="{{ route('jeux.morpion') }}" class="game-card__play">▶ JOUER</a>
                     </div>
                 </div>
                 <div class="game-card__body">
                     <div class="game-card__meta">
                         <span class="game-card__tag" style="color:var(--neon-y);border-color:rgba(255,221,0,0.3)">RÉFLEXE</span>
-                        <span class="game-card__players">👤 INVITÉ OK</span>
+                        <span class="game-card__players">👤 INVITÉ</span>
                     </div>
                     <h3 class="game-card__name">Morpion</h3>
                     <p class="game-card__desc">X ou O — qui alignera trois en premier ?</p>
@@ -182,12 +153,64 @@
                 <div class="game-card__glow" style="--gc: rgba(255,221,0,0.15)"></div>
             </div>
 
+            <div class="game-card" data-color="#bf00ff">
+                <div class="game-card__screen" style="background:linear-gradient(135deg,#0d0015,#1a002a)">
+                    <span class="game-card__emoji">🟦</span>
+                    <div class="game-card__overlay">
+                        <a href="{{ route('jeux.tetris') }}" class="game-card__play">▶ JOUER</a>
+                    </div>
+                </div>
+                <div class="game-card__body">
+                    <div class="game-card__meta">
+                        <span class="game-card__tag" style="color:var(--neon-p);border-color:rgba(191,0,255,0.3)">PUZZLE</span>
+                        <span class="game-card__players">👤 INVITÉ</span>
+                    </div>
+                    <h3 class="game-card__name">Tetris</h3>
+                    <p class="game-card__desc">Empile les blocs et efface les lignes.</p>
+                </div>
+                <div class="game-card__glow" style="--gc: rgba(191,0,255,0.15)"></div>
+            </div>
+
+            <div class="game-card" data-color="#00ff88">
+                <div class="game-card__screen" style="background:linear-gradient(135deg,#001a0a,#002a10)">
+                    <span class="game-card__emoji">🏓</span>
+                    <div class="game-card__overlay">
+                        <a href="{{ route('jeux.pong') }}" class="game-card__play">▶ JOUER</a>
+                    </div>
+                </div>
+                <div class="game-card__body">
+                    <div class="game-card__meta">
+                        <span class="game-card__tag" style="color:var(--neon-g);border-color:rgba(0,255,136,0.3)">ARCADE</span>
+                        <span class="game-card__players">👤 INVITÉ</span>
+                    </div>
+                    <h3 class="game-card__name">Pong</h3>
+                    <p class="game-card__desc">Affronte l'IA dans le jeu vidéo originel.</p>
+                </div>
+                <div class="game-card__glow" style="--gc: rgba(0,255,136,0.15)"></div>
+            </div>
+
+            <div class="game-card" data-color="#ffdd00">
+                <div class="game-card__screen" style="background:linear-gradient(135deg,#1a1400,#0d0b00)">
+                    <span class="game-card__emoji">🐦</span>
+                    <div class="game-card__overlay">
+                        <a href="{{ route('jeux.flappy') }}" class="game-card__play">▶ JOUER</a>
+                    </div>
+                </div>
+                <div class="game-card__body">
+                    <div class="game-card__meta">
+                        <span class="game-card__tag" style="color:var(--neon-y);border-color:rgba(255,221,0,0.3)">RÉFLEXE</span>
+                        <span class="game-card__players">👤 INVITÉ</span>
+                    </div>
+                    <h3 class="game-card__name">Flappy Bird</h3>
+                    <p class="game-card__desc">Évite les tuyaux le plus longtemps possible.</p>
+                </div>
+                <div class="game-card__glow" style="--gc: rgba(255,221,0,0.15)"></div>
+            </div>
+
         </div>
     </section>
 
-    <!-- ══════════════════════════════
-         CLASSEMENT
-    ══════════════════════════════ -->
+    <!-- CLASSEMENT -->
     <section class="section section--dark" id="classement">
         <div class="section-head">
             <div>
@@ -197,7 +220,7 @@
         </div>
 
         <div class="lb-wrap">
-            @if(count($topScores) >= 3)
+            @if(isset($topScores) && count($topScores) >= 3)
             <div class="podium">
                 <div class="podium-card podium-card--2">
                     <div class="podium-avatar">🥈</div>
@@ -231,18 +254,20 @@
                     <span>JEU</span>
                     <span>SCORE</span>
                 </div>
-                @forelse($topScores->skip(3) as $index => $score)
-                <div class="lb-row">
-                    <span class="lb-row__rank">{{ str_pad($index + 4, 2, '0', STR_PAD_LEFT) }}</span>
-                    <span class="lb-row__player"><span class="lb-row__avatar">🎮</span> {{ $score->user->pseudo }}</span>
-                    <span class="lb-row__game">{{ $score->jeu }}</span>
-                    <span class="lb-row__score" style="color:var(--neon-g)">{{ number_format($score->score) }}</span>
-                </div>
-                @empty
-                <div class="lb-row" style="justify-content:center;color:var(--muted);">
-                    Aucun score enregistré pour l'instant.
-                </div>
-                @endforelse
+                @if(isset($topScores) && count($topScores) > 3)
+                    @foreach($topScores->skip(3) as $index => $s)
+                    <div class="lb-row">
+                        <span class="lb-row__rank">{{ str_pad($index + 4, 2, '0', STR_PAD_LEFT) }}</span>
+                        <span class="lb-row__player"><span class="lb-row__avatar">🎮</span> {{ $s->user->pseudo }}</span>
+                        <span class="lb-row__game">{{ $s->jeu }}</span>
+                        <span class="lb-row__score" style="color:var(--neon-g)">{{ number_format($s->score) }}</span>
+                    </div>
+                    @endforeach
+                @else
+                    <div class="lb-row" style="justify-content:center;color:var(--muted);">
+                        Aucun score enregistré pour l'instant.
+                    </div>
+                @endif
 
                 <div class="lb-row lb-row--you">
                     <span class="lb-row__rank">??</span>
@@ -256,9 +281,7 @@
         </div>
     </section>
 
-    <!-- ══════════════════════════════
-         FOOTER
-    ══════════════════════════════ -->
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-grid">
             <div class="footer-brand">
@@ -268,10 +291,10 @@
             <div class="footer-col">
                 <h4 class="footer-col__title">JEUX</h4>
                 <ul class="footer-col__list">
-                    <li><a href="#">Tous les jeux</a></li>
-                    <li><a href="#">Arcade</a></li>
-                    <li><a href="#">Puzzle</a></li>
-                    <li><a href="#">Stratégie</a></li>
+                    <li><a href="#jeux">Tous les jeux</a></li>
+                    <li><a href="{{ route('jeux.snake') }}">Snake</a></li>
+                    <li><a href="{{ route('jeux.tetris') }}">Tetris</a></li>
+                    <li><a href="{{ route('jeux.morpion') }}">Morpion</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -301,7 +324,6 @@
         </div>
     </footer>
 
-    {{-- Score flash après une partie --}}
     @if(session('score_flash'))
     <div class="score-flash" id="scoreFlash">
         <button class="score-flash__close" id="closeFlash">✕</button>

@@ -30,3 +30,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/classement', [LeaderboardController::class, 'index'])
          ->name('leaderboard.index');
 });
+
+// route des jeux déja fait
+Route::get('/jeux/snake',   function () { return view('jeux.snake');   })->name('jeux.snake');
+Route::get('/jeux/morpion', function () { return view('jeux.morpion'); })->name('jeux.morpion');
+Route::get('/jeux/tetris',  function () { return view('jeux.tetris');  })->name('jeux.tetris');
+Route::get('/jeux/pong',    function () { return view('jeux.pong');    })->name('jeux.pong');
+Route::get('/jeux/memory',  function () { return view('jeux.memory');  })->name('jeux.memory');
+Route::get('/jeux/flappy',  function () { return view('jeux.flappy');  })->name('jeux.flappy');

@@ -8,12 +8,12 @@
 
 @section('content')
 
-    <a href="{{ route('connexion') }}" class="back-link">‹ RETOUR</a>
+    <a href="javascript:history.back()" class="back-link">‹ RETOUR</a>
 
     <main class="auth-page">
         <div class="auth-card">
 
-            <a href="{{ route('welcome') }}" class="auth-logo">PIXELZONE</a>
+            <span class="auth-logo">PIXELZONE</span>
             <p class="auth-subtitle">Crée ton compte pour jouer et sauvegarder tes scores.</p>
 
             @if(session('error'))
@@ -89,10 +89,6 @@
                 </button>
 
             </form>
-
-            <div class="auth-sep"><span>ou</span></div>
-
-            <a href="{{ route('accueil') }}" class="btn-guest">→ Continuer en tant qu'invité</a>
 
             <p class="auth-switch">
                 Déjà un compte ?

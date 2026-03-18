@@ -13,7 +13,7 @@
     <main class="auth-page">
         <div class="auth-card">
 
-            <a href="{{ route('welcome') }}" class="auth-logo">PIXELZONE</a>
+            <span class="auth-logo">PIXELZONE</span>
             <p class="auth-subtitle">Connecte-toi pour jouer et sauvegarder tes scores.</p>
 
             @if(session('error'))

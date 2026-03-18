@@ -1,0 +1,118 @@
+body { overflow: hidden; }
+
+.game-page {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.game-header {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.game-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 20px;
+  color: var(--neon-g);
+  text-shadow: 0 0 20px var(--neon-g);
+}
+
+.game-score {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: var(--neon-y);
+}
+
+.game-score span {
+  color: #fff;
+  margin-left: 8px;
+}
+
+canvas {
+  border: 2px solid var(--neon-g);
+  box-shadow: 0 0 30px rgba(0,255,136,0.4);
+  background: #05050f;
+  display: block;
+}
+
+.game-controls {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 2;
+}
+
+.game-overlay {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(5,5,15,0.97);
+  border: 2px solid var(--neon-g);
+  box-shadow: 0 0 40px rgba(0,255,136,0.3);
+  padding: 40px 60px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  z-index: 100;
+}
+
+.overlay-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 20px;
+  color: var(--neon-g);
+  text-shadow: 0 0 20px var(--neon-g);
+}
+
+.overlay-score {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  color: var(--neon-y);
+}
+
+.btn-play {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  padding: 14px 28px;
+  background: var(--neon-g);
+  color: #000;
+  border: none;
+  cursor: none;
+  letter-spacing: 2px;
+  clip-path: polygon(
+    0 0, calc(100% - 10px) 0, 100% 10px,
+    100% 100%, 10px 100%, 0 calc(100% - 10px)
+  );
+  box-shadow: 0 0 20px rgba(0,255,136,0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-play:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(0,255,136,0.8);
+}
+
+.back-link {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  text-decoration: none;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 200;
+  transition: color 0.2s;
+}
+
+.back-link:hover { color: var(--neon-g); }
