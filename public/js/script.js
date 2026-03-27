@@ -49,13 +49,14 @@ function animateCursor() {
 }
 requestAnimationFrame(animateCursor);
 
-// Hover liens/boutons
 document.querySelectorAll('a, button').forEach(function(el) {
   el.addEventListener('mouseenter', function() {
-    cursor.classList.add('hover');
+    cursor.style.background = '#bf00ff';
+    cursor.style.boxShadow = '0 0 8px #bf00ff, 0 0 20px rgba(191,0,255,0.6), 0 0 40px rgba(191,0,255,0.3)';
   });
   el.addEventListener('mouseleave', function() {
-    cursor.classList.remove('hover');
+    cursor.style.background = '';
+    cursor.style.boxShadow = '';
   });
 });
 
