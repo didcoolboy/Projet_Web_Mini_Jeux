@@ -104,3 +104,18 @@ class User extends Authenticatable
             ->exists();
     }
 }
+
+// Dans $fillable, ajouter 'role'
+protected $fillable = ['name', 'email', 'password', 'role'];
+
+// Helper pratique
+public function isAdmin(): bool
+{
+    return $this->role === 'admin';
+}
+
+// Relation
+public function gameRequests()
+{
+    return $this->hasMany(GameRequest::class);
+}
