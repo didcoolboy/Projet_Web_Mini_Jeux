@@ -41,6 +41,11 @@ $app->singleton(
     App\Exceptions\Handler::class
 );
 
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->alias([
+        'admin' => \App\Http\Middleware\IsAdmin::class,
+    ]);
+})
 /*
 |--------------------------------------------------------------------------
 | Return The Application
