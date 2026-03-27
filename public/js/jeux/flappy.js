@@ -11,7 +11,7 @@ const H = canvas.height;
 
 const BIRD_X = 80;
 const BIRD_SIZE = 20;
-const GRAVITY = 0.45;
+const GRAVITY = 0.40;
 const JUMP = -8;
 const PIPE_W = 50;
 const PIPE_GAP = 160;

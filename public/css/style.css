@@ -34,6 +34,11 @@ body {
   cursor: none;
 }
 
+/* Masquer le curseur sur tous les éléments interactifs */
+a, button, input, select, textarea {
+  cursor: none;
+}
+
 /* ═══════════════════════════════════════════════
    CURSEUR PRINCIPAL
 ═══════════════════════════════════════════════ */
@@ -45,26 +50,11 @@ body {
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
-  transition: transform 0.1s, background 0.2s, box-shadow 0.2s;
-  clip-path: polygon(
-    0 25%, 25% 25%, 25% 0,
-    75% 0, 75% 25%, 100% 25%,
-    100% 75%, 75% 75%, 75% 100%,
-    25% 100%, 25% 75%, 0 75%
-  );
+  transition: background 0.2s, box-shadow 0.2s;
   box-shadow:
     0 0 8px  var(--neon-g),
     0 0 20px rgba(0,255,136,0.6),
     0 0 40px rgba(0,255,136,0.3);
-}
-
-.cursor.hover {
-  transform: translate(-50%, -50%) scale(1.8);
-  background: var(--neon-y);
-  box-shadow:
-    0 0 12px  var(--neon-y),
-    0 0 30px  rgba(255,221,0,0.7),
-    0 0 60px  rgba(255,221,0,0.4);
 }
 
 /* ═══════════════════════════════════════════════
