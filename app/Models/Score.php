@@ -18,4 +18,15 @@ class Score extends Model
     {
         return $this->belongsTo(Game::class);
     }
+
+    public function showInvite()
+    {
+        $topScores = Score::with('user')
+            ->orderByDesc('score')
+            ->take(10)
+            ->get();
+            return view('auth.invite', compact('topScores'));
+    }
+
 }
+

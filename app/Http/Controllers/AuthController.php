@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Models\Score;
 
 class AuthController extends Controller
 {
@@ -75,9 +76,14 @@ class AuthController extends Controller
         return redirect()->route('welcome');
     }
 
+
     public function showInvite()
-{
-    $topScores = collect();
-    return view('auth.invite', compact('topScores'));
-}
+    {
+        $topScores = \App\Models\Score::with('user')
+            ->orderByDesc('score')
+            ->take(10)
+            ->get();
+
+        return view('auth.invite', compact('topScores'));
+    }
 }
