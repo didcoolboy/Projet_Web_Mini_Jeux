@@ -48,7 +48,7 @@ Route::prefix('admin')
     ->group(function () {
 
         // Dashboard
-        Route::get('/', fn() => view('admin.dashboard'))->name('dashboard');
+        Route::get('/', [AdminUserController::class, 'dashboard'])->name('dashboard');
 
         // Gestion des comptes
         Route::get('/users', [AdminUserController::class, 'index'])->name('users.index');

@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin — PIXELZONE</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+
 </head>
 <body>
     <nav>
@@ -18,7 +19,7 @@
             @endif
         </a>
         <span class="badge-admin">ADMIN</span>
-        <span>{{ auth()->user()->name }}</span>
+        <span>{{ auth()->user()->pseudo }}</span>   
     </nav>
 
     {{-- Flash messages --}}

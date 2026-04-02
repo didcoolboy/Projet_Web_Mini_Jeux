@@ -1,57 +1,53 @@
 @extends('layouts.admin')
 
 @section('content')
-<table>
-    <thead>
-        <tr>
-            <th>Pseudo</th><th>Email</th><th>Rôle</th>
-            <th>Statut</th><th>Inscrit le</th><th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    @foreach($users as $user)
-        <tr>
-            <td>{{ $user->name }}</td>
-            <td>{{ $user->email }}</td>
-            <td>{{ $user->role }}</td>
-            <td>{{ $user->status ?? 'active' }}</td>
-            <td>{{ $user->created_at->format('d/m/Y') }}</td>
-            <td>
-                @if(($user->status ?? 'active') === 'active')
-                    <form method="POST" action="{{ route('admin.users.ban', $user) }}">
-                        @csrf @method('PATCH')
-                        <button>Bannir</button>
-                    </form>
-                @else
-                    <form method="POST" action="{{ route('admin.users.unban', $user) }}">
-                        @csrf @method('PATCH')
-                        <button>Rétablir</button>
-                    </form>
-                @endif
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">GESTION DES COMPTES</span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>PSEUDO</th><th>NOM</th><th>EMAIL</th><th>RÔLE</th><th>INSCRIT LE</th><th>ACTIONS</th>
+            </tr>
+        </thead>
+        <tbody>
+        @forelse($users as $user)
+            <tr>
+                <td>{{ $user->pseudo }}</td>
+                <td style="color:#4a6a4a">{{ $user->prenom }} {{ $user->nom }}</td>
+                <td style="color:#4a6a4a">{{ $user->email }}</td>
+                <td><span class="pill pill-{{ $user->role }}">{{ strtoupper($user->role) }}</span></td>
+                <td style="color:#4a6a4a">{{ $user->created_at ? $user->created_at->format('d/m/Y') : '—' }}</td>
+                <td>
+                    <div class="actions">
+                        @if($user->role === 'user')
+                            <form method="POST" action="{{ route('admin.users.promote', $user) }}">
+                                @csrf @method('PATCH')
+                                <button class="btn btn-warn">PROMOUVOIR</button>
+                            </form>
+                        @elseif($user->id !== auth()->id())
+                            <form method="POST" action="{{ route('admin.users.demote', $user) }}">
+                                @csrf @method('PATCH')
+                                <button class="btn btn-ghost">RÉTROGRADER</button>
+                            </form>
+                        @endif
 
-                @if($user->role === 'user')
-                    <form method="POST" action="{{ route('admin.users.promote', $user) }}">
-                        @csrf @method('PATCH')
-                        <button>Promouvoir admin</button>
-                    </form>
-                @elseif($user->id !== auth()->id())
-                    <form method="POST" action="{{ route('admin.users.demote', $user) }}">
-                        @csrf @method('PATCH')
-                        <button>Rétrograder</button>
-                    </form>
-                @endif
-
-                @if($user->id !== auth()->id())
-                    <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
-                          onsubmit="return confirm('Supprimer ce compte ?')">
-                        @csrf @method('DELETE')
-                        <button>Supprimer</button>
-                    </form>
-                @endif
-            </td>
-        </tr>
-    @endforeach
-    </tbody>
-</table>
-{{ $users->links() }}
+                        @if($user->id !== auth()->id())
+                            <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
+                                  onsubmit="return confirm('Supprimer {{ $user->pseudo }} ?')">
+                                @csrf @method('DELETE')
+                                <button class="btn btn-red">SUPPR.</button>
+                            </form>
+                        @endif
+                    </div>
+                </td>
+            </tr>
+        @empty
+            <tr><td colspan="6"><div class="empty-state">Aucun utilisateur</div></td></tr>
+        @endforelse
+        </tbody>
+    </table>
+    <div class="pagination">{{ $users->links() }}</div>
+</div>
 @endsection

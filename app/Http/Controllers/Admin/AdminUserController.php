@@ -48,4 +48,14 @@ class AdminUserController extends Controller
         $user->delete();
         return back()->with('success', 'Compte supprimé.');
     }
+
+
+    public function dashboard()
+    {
+        $recentUsers = User::orderBy('created_at', 'desc')->take(5)->get();
+        $recentBans  = User::where('status', 'banned')->orderBy('updated_at', 'desc')->take(5)->get();
+    
+        return view('admin.dashboard', compact('recentUsers', 'recentBans'));
+    }
+
 }
