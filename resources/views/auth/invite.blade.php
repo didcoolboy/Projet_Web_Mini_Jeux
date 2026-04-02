@@ -35,7 +35,7 @@
         <div class="hero-orb hero-orb--purple"></div>
 
         <div class="hero-inner">
-            <span class="hero-tag">👤 MODE INVITÉ ACTIF</span>
+            <span class="hero-tag">👤 MODE INVITE ACTIF</span>
             <h1 class="hero-title">
                 <span class="hero-title__top">JOUE.</span>
                 <span class="hero-title__bot">SANS LIMITE.</span>
@@ -214,7 +214,7 @@
     <section class="section section--dark" id="classement">
         <div class="section-head">
             <div>
-                <p class="section-tag">// COMPÉTITION</p>
+                <p class="section-tag">// COMPETITION</p>
                 <h2 class="section-title">Classement global</h2>
             </div>
         </div>
@@ -309,18 +309,11 @@
                 <ul class="footer-col__list">
                     <li><a href="#">À propos</a></li>
                     <li><a href="#">Contact</a></li>
-                    <li><a href="#">Conditions</a></li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <span>© 2025 PIXELZONE — TOUS DROITS RÉSERVÉS</span>
-            <div class="footer-socials">
-                <a href="#" class="footer-social">𝕏</a>
-                <a href="#" class="footer-social">in</a>
-                <a href="#" class="footer-social">▶</a>
-                <a href="#" class="footer-social">💬</a>
-            </div>
+            <span>© 2026 PIXELZONE — TOUS DROITS RESERVES</span>
         </div>
     </footer>
 

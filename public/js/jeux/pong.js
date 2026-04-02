@@ -12,12 +12,21 @@ const PADDLE_W = 12;
 const PADDLE_H = 80;
 const BALL_SIZE = 10;
 const WIN_SCORE = 7;
-const PADDLE_SPEED = 6;
+const PADDLE_SPEED = 10;
+const AI_PADDLE_SPEED = 8;
+const COUNTDOWN_SECONDS = 3;
 
 let ball, paddleL, paddleR, scoreL, scoreR, running, animFrame;
+let countdown = 0;
+let countdownTimer = null;
 const keys = {};
 
 function init() {
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
+
   paddleL = { x: 20, y: H / 2 - PADDLE_H / 2 };
   paddleR = { x: W - 20 - PADDLE_W, y: H / 2 - PADDLE_H / 2 };
   resetBall();
@@ -28,15 +37,38 @@ function init() {
 }
 
 function resetBall() {
-  const angle = (Math.random() * 60 - 30) * Math.PI / 180;
-  const dir = Math.random() > 0.5 ? 1 : -1;
   ball = {
     x: W / 2,
     y: H / 2,
-    vx: Math.cos(angle) * 5 * dir,
-    vy: Math.sin(angle) * 5,
+    vx: 0,
+    vy: 0,
     speed: 5
   };
+
+  startCountdown();
+}
+
+function startCountdown() {
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+  }
+
+  countdown = COUNTDOWN_SECONDS;
+  countdownTimer = setInterval(() => {
+    countdown--;
+
+    if (countdown <= 0) {
+      clearInterval(countdownTimer);
+      countdownTimer = null;
+      countdown = 0;
+
+      const angle = (Math.random() * 60 - 30) * Math.PI / 180;
+      const dir = Math.random() > 0.5 ? 1 : -1;
+
+      ball.vx = Math.cos(angle) * ball.speed * dir;
+      ball.vy = Math.sin(angle) * ball.speed;
+    }
+  }, 1000);
 }
 
 function update() {
@@ -52,8 +84,8 @@ function update() {
 
   // IA paddle droit
   const centerR = paddleR.y + PADDLE_H / 2;
-  if (centerR < ball.y - 5) paddleR.y = Math.min(H - PADDLE_H, paddleR.y + 4);
-  if (centerR > ball.y + 5) paddleR.y = Math.max(0, paddleR.y - 4);
+  if (centerR < ball.y - 5) paddleR.y = Math.min(H - PADDLE_H, paddleR.y + AI_PADDLE_SPEED);
+  if (centerR > ball.y + 5) paddleR.y = Math.max(0, paddleR.y - AI_PADDLE_SPEED);
 
   // Balle
   ball.x += ball.vx;
@@ -72,9 +104,9 @@ function update() {
   ) {
     ball.x = paddleL.x + PADDLE_W;
     const hit = (ball.y + BALL_SIZE / 2 - paddleL.y) / PADDLE_H - 0.5;
-    ball.speed = Math.min(ball.speed + 0.3, 12);
+    ball.speed = Math.min(ball.speed + 0.7, 15);
     ball.vy = hit * ball.speed * 2.5;
-    ball.vx = Math.abs(ball.vx) * (ball.speed / Math.abs(ball.vx));
+    ball.vx = ball.speed;
   }
 
   // Rebond paddle droit
@@ -86,9 +118,9 @@ function update() {
   ) {
     ball.x = paddleR.x - BALL_SIZE;
     const hit = (ball.y + BALL_SIZE / 2 - paddleR.y) / PADDLE_H - 0.5;
-    ball.speed = Math.min(ball.speed + 0.3, 12);
+    ball.speed = Math.min(ball.speed + 0.7, 15);
     ball.vy = hit * ball.speed * 2.5;
-    ball.vx = -Math.abs(ball.vx) * (ball.speed / Math.abs(ball.vx));
+    ball.vx = -ball.speed;
   }
 
   // Point
@@ -134,11 +166,22 @@ function draw() {
   ctx.shadowBlur = 20;
   ctx.fillRect(ball.x, ball.y, BALL_SIZE, BALL_SIZE);
   ctx.shadowBlur = 0;
+
+  if (countdown > 0) {
+  ctx.fillStyle = 'white';
+  ctx.font = '60px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(countdown, W / 2, H / 2);
+}
 }
 
 function endGame(winner) {
   running = false;
   cancelAnimationFrame(animFrame);
+  if (countdownTimer) {
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
   overlayMsg.textContent = winner + ' GAGNE !';
   startBtn.textContent = '▶ REJOUER';
   overlay.style.display = 'flex';
