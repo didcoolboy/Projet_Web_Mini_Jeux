@@ -6,22 +6,22 @@
 <div class="stats-grid">
     <div class="stat-card">
         <div class="stat-label">UTILISATEURS</div>
-        <div class="stat-value green">1 284</div>
-        <div class="stat-sub">+12 cette semaine</div>
+        <div class="stat-value green">{{ number_format($totalUsers, 0, ',', ' ') }}</div>
+        <div class="stat-sub">comptes enregistrés</div>
     </div>
     <div class="stat-card">
         <div class="stat-label">JEUX ACTIFS</div>
-        <div class="stat-value green">47</div>
-        <div class="stat-sub">3 en attente</div>
+        <div class="stat-value green">{{ number_format($activeGames, 0, ',', ' ') }}</div>
+        <div class="stat-sub">{{ $pendingRequests }} en attente</div>
     </div>
     <div class="stat-card">
         <div class="stat-label">DEMANDES</div>
-        <div class="stat-value orange">3</div>
-        <div class="stat-sub">à traiter</div>
+        <div class="stat-value orange">{{ number_format($totalRequests, 0, ',', ' ') }}</div>
+        <div class="stat-sub">{{ $pendingRequests }} à traiter</div>
     </div>
     <div class="stat-card">
         <div class="stat-label">BANNIS</div>
-        <div class="stat-value red">8</div>
+        <div class="stat-value red">{{ number_format($bannedUsers, 0, ',', ' ') }}</div>
         <div class="stat-sub">comptes suspendus</div>
     </div>
 </div>

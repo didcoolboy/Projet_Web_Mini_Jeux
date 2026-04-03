@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Game;
+use App\Models\GameRequest;
 use App\Models\User;
 
 class AdminUserController extends Controller
@@ -52,10 +54,24 @@ class AdminUserController extends Controller
 
     public function dashboard()
     {
+        $totalUsers     = User::count();
+        $activeGames     = Game::count();
+        $pendingRequests = GameRequest::where('status', 'pending')->count();
+        $totalRequests   = GameRequest::count();
+        $bannedUsers     = User::where('status', 'banned')->count();
+
         $recentUsers = User::orderBy('created_at', 'desc')->take(5)->get();
         $recentBans  = User::where('status', 'banned')->orderBy('updated_at', 'desc')->take(5)->get();
     
-        return view('admin.dashboard', compact('recentUsers', 'recentBans'));
+        return view('admin.dashboard', compact(
+            'totalUsers',
+            'activeGames',
+            'pendingRequests',
+            'totalRequests',
+            'bannedUsers',
+            'recentUsers',
+            'recentBans'
+        ));
     }
 
 }
