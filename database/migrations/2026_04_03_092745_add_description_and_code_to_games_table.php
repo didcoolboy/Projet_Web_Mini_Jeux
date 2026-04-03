@@ -31,3 +31,5 @@ class AddDescriptionAndCodeToGamesTable extends Migration
         });
     }
 }
+
+
