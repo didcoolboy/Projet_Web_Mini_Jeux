@@ -2,7 +2,16 @@
    PIXELZONE — connexion.css
 ═══════════════════════════════════════════════ */
 
-body { overflow: hidden; }
+body {
+  overflow: hidden;
+  cursor: none !important;
+}
+
+body *,
+body *::before,
+body *::after {
+  cursor: none !important;
+}
 
 /* ── Bouton retour ── */
 .back-link {
