@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PublicGameController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminGameController;
@@ -41,6 +42,7 @@ Route::get('/jeux/tetris',  function () { return view('jeux.tetris');  })->name(
 Route::get('/jeux/pong',    function () { return view('jeux.pong');    })->name('jeux.pong');
 Route::get('/jeux/memory',  function () { return view('jeux.memory');  })->name('jeux.memory');
 Route::get('/jeux/flappy',  function () { return view('jeux.flappy');  })->name('jeux.flappy');
+Route::get('/jeux/{slug}', [PublicGameController::class, 'show'])->name('jeux.dynamic');
 
 Route::prefix('admin')
     ->name('admin.')

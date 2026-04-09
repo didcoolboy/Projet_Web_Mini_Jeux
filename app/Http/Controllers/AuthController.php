@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Score;
+use App\Models\Game;
 
 class AuthController extends Controller
 {
@@ -89,7 +90,12 @@ class AuthController extends Controller
             ->take(10)
             ->get();
 
-        return view('auth.invite', compact('topScores'));
+        $uploadedGames = Game::query()
+            ->whereNotIn('slug', ['snake', 'morpion', 'tetris', 'pong', 'memory', 'flappy'])
+            ->latest()
+            ->get();
+
+        return view('auth.invite', compact('topScores', 'uploadedGames'));
     }
 
 }
