@@ -69,6 +69,11 @@ cells.forEach((cell, i) => {
         status.textContent = `JOUEUR ${result} GAGNE !`;
         scores[result]++;
         result === 'X' ? scoreX.textContent = scores.X : scoreO.textContent = scores.O;
+        
+        // Enregistrer le score si X gagne
+        if (result === 'X') {
+          saveScore(scores.X, 'morpion');
+        }
       }
       return;
     }

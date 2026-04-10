@@ -102,6 +102,9 @@ function gameOver() {
   overlayMsg.textContent = 'SCORE : ' + score;
   startBtn.textContent = '▶ REJOUER';
   overlay.style.display = 'flex';
+
+  // Enregistrer le score si l'utilisateur est connecté
+  saveScore(score, 'snake');
 }
 
 function startGame() {

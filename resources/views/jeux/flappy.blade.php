@@ -34,5 +34,6 @@
 @endsection
 
 @push('scripts')
+    <script src="{{ asset('js/jeux/save-score.js') }}"></script>
     <script src="{{ asset('js/jeux/flappy.js') }}"></script>
 @endpush

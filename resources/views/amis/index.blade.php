@@ -1,33 +1,32 @@
-@extends('layouts.app')
+@extends('layouts.pixel')
 
 @section('title', 'Amis')
 
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('css/amis.css') }}">
+  <style>
+    .pixels {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+  </style>
+@endpush
+
 @section('content')
 
-  {{-- Titre + barre de recherche globale --}}
+  {{-- Pixels flottants --}}
+  <div class="pixels" id="pixels"></div>
+
+  {{-- Titre + envoi de demande --}}
   <div class="page-header">
     <div class="page-title">
       <small>★ SOCIAL ★</small>
       AMIS
-    </div>
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="RECHERCHER UN PSEUDO..." autocomplete="off">
-      <button class="btn" onclick="searchPlayer()">CHERCHER</button>
-    </div>
-  </div>
-
-  {{-- Résultat recherche globale --}}
-  <div class="search-result search-result-hidden" id="searchResult">
-    <div class="avatar">
-      <span id="srAvatar">?</span>
-      <div class="status-dot offline"></div>
-    </div>
-    <div class="req-info">
-      <div class="req-pseudo" id="srPseudo">—</div>
-      <div class="req-time"   id="srInfo">score total : —</div>
-    </div>
-    <div class="req-actions">
-      <button class="btn btn-sm" onclick="sendRequest()">+ AJOUTER</button>
     </div>
   </div>
 
@@ -48,15 +47,16 @@
   {{-- ── Section : Mes amis ── --}}
   <div class="section active" id="mes-amis">
     <div class="friends-grid" id="friendsGrid">
-      @foreach($amis as $ami)
+      @forelse($amis as $ami)
         @php
-          $rank = $loop->index === 0 ? 'gold' : ($loop->index === 1 ? 'silver' : ($loop->index === 2 ? 'bronze' : null));
+          $index = $loop->index;
+          $rank  = $index === 0 ? 'gold' : ($index === 1 ? 'silver' : ($index === 2 ? 'bronze' : null));
           $rankNames = ['gold' => 'OR', 'silver' => 'ARG', 'bronze' => 'BRZ'];
-          $isOnline  = $ami->derniere_activite && \Carbon\Carbon::parse($ami->derniere_activite)->diffInMinutes(now()) < 5;
+          $amiScore   = $ami->totalScore();
+          $amiParties = \App\Models\Score::where('user_id', $ami->id)->count();
         @endphp
         <div class="friend-card {{ $rank ? 'rank-'.$rank : '' }}">
 
-          {{-- Couronne pour le rang or --}}
           @if($rank === 'gold')
             <svg class="crown-pixel" viewBox="0 0 7 5" xmlns="http://www.w3.org/2000/svg" width="28" height="20">
               <rect x="0" y="0" width="1" height="1" fill="#fff5a0"/>
@@ -78,19 +78,10 @@
             </svg>
           @endif
 
-          {{-- Étoiles pour argent --}}
-          @if($rank === 'silver')
-            <div class="star-wrap">
-              @for($s = 0; $s < 9; $s++)
-                <div class="star" style="top:{{ rand(8,88) }}%;left:{{ rand(4,92) }}%;animation-delay:{{ number_format(rand(0,200)/100, 2) }}s;animation-duration:{{ number_format(rand(100,220)/100, 2) }}s;"></div>
-              @endfor
-            </div>
-          @endif
-
           <div class="card-top">
             <div class="avatar">
               {{ strtoupper(substr($ami->pseudo, 0, 2)) }}
-              <div class="status-dot {{ $isOnline ? 'online' : 'offline' }}"></div>
+              <div class="status-dot offline"></div>
             </div>
             <div class="card-info">
               <div class="card-pseudo">
@@ -99,20 +90,17 @@
                   <span class="rank-label {{ $rank }}">{{ $rankNames[$rank] }}</span>
                 @endif
               </div>
-              <div class="card-status {{ $isOnline ? 'online' : 'offline' }}">
-                {{ $isOnline ? '● EN LIGNE' : '○ HORS LIGNE' }}
-              </div>
             </div>
           </div>
 
           <div class="card-stats">
             <div class="stat-box">
               <div class="stat-label">Score</div>
-              <div class="stat-value {{ $rank ?? '' }}">{{ number_format($ami->score_total, 0, ',', ' ') }}</div>
+              <div class="stat-value {{ $rank ?? '' }}">{{ number_format($amiScore, 0, ',', ' ') }}</div>
             </div>
             <div class="stat-box">
               <div class="stat-label">Parties</div>
-              <div class="stat-value">{{ $ami->nb_parties }}</div>
+              <div class="stat-value">{{ $amiParties }}</div>
             </div>
           </div>
 
@@ -126,7 +114,11 @@
           </div>
 
         </div>
-      @endforeach
+      @empty
+        <div style="color:var(--muted);font-size:.72rem;letter-spacing:2px;padding:20px 0;">
+          AUCUN AMI POUR L'INSTANT
+        </div>
+      @endforelse
     </div>
   </div>
 
@@ -152,13 +144,14 @@
       @forelse($demandes as $demande)
         <div class="request-card" id="demande-{{ $demande->id }}">
           <div class="avatar">
-            {{ strtoupper(substr($demande->demandeur->pseudo, 0, 2)) }}
+            {{ strtoupper(substr($demande->sender->pseudo, 0, 2)) }}
             <div class="status-dot offline"></div>
           </div>
           <div class="req-info">
-            <div class="req-pseudo">{{ $demande->demandeur->pseudo }}</div>
+            <div class="req-pseudo">{{ $demande->sender->pseudo }}</div>
             <div class="req-time">
-              Demande reçue {{ $demande->created_at->diffForHumans() }} · score : {{ number_format($demande->demandeur->score_total, 0, ',', ' ') }}
+              Demande reçue {{ $demande->created_at->diffForHumans() }}
+              · score : {{ number_format($demande->sender->totalScore(), 0, ',', ' ') }}
             </div>
           </div>
           <div class="req-actions">
@@ -190,17 +183,18 @@
             <th>PSEUDO</th>
             <th class="text-right">SCORE</th>
             <th class="text-right">PARTIES</th>
-            <th class="text-center">STATUT</th>
           </tr>
         </thead>
         <tbody>
           @foreach($classement as $index => $joueur)
             @php
-              $rp        = $index === 0 ? 'gold' : ($index === 1 ? 'silver' : ($index === 2 ? 'bronze' : null));
+              $rp = $index === 0 ? 'gold' : ($index === 1 ? 'silver' : ($index === 2 ? 'bronze' : null));
               $rankColors = ['gold' => '#ffe600', 'silver' => '#b0bec5', 'bronze' => '#cd7c4b'];
               $medals     = ['gold' => '🥇', 'silver' => '🥈', 'bronze' => '🥉'];
-              $isOnline   = $joueur->derniere_activite && \Carbon\Carbon::parse($joueur->derniere_activite)->diffInMinutes(now()) < 5;
+              $rankNames2 = ['gold' => 'OR', 'silver' => 'ARG', 'bronze' => 'BRZ'];
               $isMe       = $joueur->id === auth()->id();
+              $jScore     = $joueur->totalScore();
+              $jParties   = \App\Models\Score::where('user_id', $joueur->id)->count();
             @endphp
             <tr style="border-bottom:1px solid var(--border);{{ $rp ? 'border-left:3px solid '.$rankColors[$rp].';' : '' }}{{ $isMe ? 'background:rgba(0,255,136,0.04);' : '' }}">
               <td style="padding:14px 16px;font-size:.8rem;font-family:'Orbitron',sans-serif;color:{{ $rp ? $rankColors[$rp] : 'var(--muted)' }};">
@@ -209,19 +203,12 @@
               <td style="padding:14px 16px;font-family:'Orbitron',sans-serif;font-size:.78rem;font-weight:700;color:{{ $isMe ? 'var(--accent)' : 'var(--text)' }};">
                 {{ $joueur->pseudo }}
                 @if($isMe) <span style="font-size:.6rem;color:var(--accent);letter-spacing:2px;"> (VOUS)</span> @endif
-                @if($rp) <span style="font-size:.55rem;border:1px solid {{ $rankColors[$rp] }};color:{{ $rankColors[$rp] }};padding:1px 5px;margin-left:6px;letter-spacing:2px;">{{ $rankNames[$rp] }}</span> @endif
+                @if($rp) <span style="font-size:.55rem;border:1px solid {{ $rankColors[$rp] }};color:{{ $rankColors[$rp] }};padding:1px 5px;margin-left:6px;letter-spacing:2px;">{{ $rankNames2[$rp] }}</span> @endif
               </td>
               <td style="padding:14px 16px;text-align:right;font-family:'Orbitron',sans-serif;font-size:.85rem;font-weight:700;color:{{ $rp ? $rankColors[$rp] : 'var(--accent)' }};">
-                {{ number_format($joueur->score_total, 0, ',', ' ') }}
+                {{ number_format($jScore, 0, ',', ' ') }}
               </td>
-              <td style="padding:14px 16px;text-align:right;font-size:.78rem;color:var(--muted);">{{ $joueur->nb_parties }}</td>
-              <td style="padding:14px 16px;text-align:center;font-size:.65rem;letter-spacing:1px;">
-                @if($isOnline)
-                  <span style="color:#00ff88">● EN LIGNE</span>
-                @else
-                  <span style="color:#5a5a8a">○ HORS LIGNE</span>
-                @endif
-              </td>
+              <td style="padding:14px 16px;text-align:right;font-size:.78rem;color:var(--muted);">{{ $jParties }}</td>
             </tr>
           @endforeach
         </tbody>
@@ -233,4 +220,58 @@
 
 @push('scripts')
   <script src="{{ asset('js/amis.js') }}"></script>
+  <script>
+    // Assurer que switchTab fonctionne
+    if (typeof switchTab === 'undefined') {
+      function switchTab(id, el) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
+      }
+    }
+
+    // Pixels flottants - APPARITION CONTINUE
+    document.addEventListener('DOMContentLoaded', () => {
+      const pixelsEl = document.getElementById('pixels');
+      if (pixelsEl) {
+        const bgCols = ['#00ff88', '#ff3366', '#ffdd00', '#bf00ff', '#00d4ff'];
+        let pixelCounter = 0;
+
+        // Créer un nouveau pixel toutes les 200-400ms
+        setInterval(() => {
+          const p = document.createElement('div');
+          p.className = 'pixel';
+          const size = 2 + Math.floor(Math.random() * 4);
+          const speed = 5 + Math.random() * 8; // VITESSE MOYENNE entre 5 et 13 secondes
+          const animName = `floatPixel${pixelCounter++}`; // ANIMATION UNIQUE pour chaque pixel
+
+          // Créer une animation CSS unique pour ce pixel
+          const style = document.createElement('style');
+          style.textContent = `
+            @keyframes ${animName} {
+              0%   { transform: translateY(0); opacity: 0; }
+              10%  { opacity: 1; }
+              90%  { opacity: 1; }
+              100% { transform: translateY(-120vh); opacity: 0; }
+            }
+          `;
+          document.head.appendChild(style);
+
+          p.style.cssText = `position:absolute;left:${Math.random()*100}%;top:100vh;background:${bgCols[Math.floor(Math.random()*bgCols.length)]};width:${size}px;height:${size}px;animation:${animName} ${speed}s linear infinite;`;
+          pixelsEl.appendChild(p);
+
+          // Nettoyer les pixels terminés après 15 secondes
+          setTimeout(() => {
+            if (p.parentNode) {
+              p.parentNode.removeChild(p);
+            }
+            if (style.parentNode) {
+              style.parentNode.removeChild(style);
+            }
+          }, speed * 1000 + 1000);
+        }, 200 + Math.random() * 200); // INTERVALLE ALÉATOIRE entre 200 et 400ms
+      }
+    });
+  </script>
 @endpush

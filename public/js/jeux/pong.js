@@ -185,6 +185,11 @@ function endGame(winner) {
   overlayMsg.textContent = winner + ' GAGNE !';
   startBtn.textContent = '▶ REJOUER';
   overlay.style.display = 'flex';
+  
+  // Enregistrer le score si le joueur gagne
+  if (winner === 'JOUEUR') {
+    saveScore(scoreL, 'pong');
+  }
 }
 
 function loop() {

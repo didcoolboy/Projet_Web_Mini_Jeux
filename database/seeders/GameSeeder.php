@@ -33,13 +33,6 @@ class GameSeeder extends Seeder
                 'js_file' => 'pong.js',
             ],
             [
-                'slug' => 'asteroids',
-                'name' => 'Asteroids',
-                'icon' => '☄️',
-                'description' => 'Détruis les astéroïdes dans l\'espace.',
-                'js_file' => null, // assuming no file yet
-            ],
-            [
                 'slug' => 'memory',
                 'name' => 'Memory',
                 'icon' => '🧠',

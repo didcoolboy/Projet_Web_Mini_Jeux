@@ -45,9 +45,19 @@ class User extends Authenticatable
         return $this->hasMany(Score::class);
     }
 
+    public function lastPlayed(): HasMany
+    {
+        return $this->hasMany(LastPlayed::class);
+    }
+
     public function totalScore(): int
     {
         return (int) $this->scores()->sum('score');
+    }
+
+    public function gamesPlayedCount(): int
+    {
+        return $this->scores()->distinct('game_id')->count('game_id');
     }
 
     public function scoreForGame(int $gameId): int
