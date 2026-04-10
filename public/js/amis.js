@@ -37,12 +37,8 @@ document.addEventListener('DOMContentLoaded', () => {
 // ═══════════════════════════════════════════════
 
 async function searchPlayer() {
-  const searchInput = document.getElementById('searchInput');
-  if (!searchInput) return; // Élement n'existe pas
-  
-  const val    = searchInput.value.trim();
+  const val    = document.getElementById('searchInput').value.trim();
   const result = document.getElementById('searchResult');
-  if (!result) return; // Élement n'existe pas
   if (!val) { result.classList.add('search-result-hidden'); return; }
 
   try {
@@ -51,22 +47,15 @@ async function searchPlayer() {
     });
     const data = await res.json();
 
-    const srAvatar = document.getElementById('srAvatar');
-    const srPseudo = document.getElementById('srPseudo');
-    const srInfo = document.getElementById('srInfo');
-    const searchResult = document.getElementById('searchResult');
-    
-    if (!srAvatar || !srPseudo || !srInfo || !searchResult) return; // Éléments manquants
-
     if (data.found) {
-      srAvatar.textContent = data.pseudo.slice(0, 2).toUpperCase();
-      srPseudo.textContent = data.pseudo;
-      srInfo.textContent   = `score total : ${data.score} · ${data.parties} parties`;
-      searchResult.dataset.userId = data.id;
+      document.getElementById('srAvatar').textContent = data.pseudo.slice(0, 2).toUpperCase();
+      document.getElementById('srPseudo').textContent = data.pseudo;
+      document.getElementById('srInfo').textContent   = `score total : ${data.score} · ${data.parties} parties`;
+      document.getElementById('searchResult').dataset.userId = data.id;
     } else {
-      srAvatar.textContent = '?';
-      srPseudo.textContent = 'AUCUN RÉSULTAT';
-      srInfo.textContent   = `pseudo "${val}" introuvable`;
+      document.getElementById('srAvatar').textContent = '?';
+      document.getElementById('srPseudo').textContent = 'AUCUN RÉSULTAT';
+      document.getElementById('srInfo').textContent   = `pseudo "${val}" introuvable`;
     }
     result.classList.remove('search-result-hidden');
   } catch (e) {
@@ -159,60 +148,55 @@ document.addEventListener('DOMContentLoaded', () => {
 // CURSEUR CARRÉ + TRAÎNÉE
 // ═══════════════════════════════════════════════
 
-document.addEventListener('DOMContentLoaded', () => {
-  const mainCur = document.getElementById('cur-main');
-  if (!mainCur) return; // Curseur n'existe pas
-  
-  const TRAIL_LEN = 4;
-  const trailPos  = Array.from({ length: TRAIL_LEN }, () => ({ x: -99, y: -99 }));
-  let mouseX = -99, mouseY = -99;
+const TRAIL_LEN = 4;
+const trailPos  = Array.from({ length: TRAIL_LEN }, () => ({ x: -99, y: -99 }));
+let mouseX = -99, mouseY = -99;
 
-  const trailEls = [];
-  for (let i = 0; i < TRAIL_LEN; i++) {
-    const el    = document.createElement('div');
-    const size  = Math.max(3, 8 - i * 2);
-    const alpha = ((TRAIL_LEN - i + 1) / (TRAIL_LEN + 1)).toFixed(2);
-    el.style.cssText = `position:fixed;width:${size}px;height:${size}px;pointer-events:none;z-index:${9998-i};background:rgba(0,255,136,${alpha});image-rendering:pixelated;transform:translate(-50%,-50%);`;
-    document.body.appendChild(el);
-    trailEls.push({ el });
-  }
+const mainCur = document.getElementById('cur-main');
 
-  document.addEventListener('mousemove', e => {
-    mouseX = e.clientX; mouseY = e.clientY;
-    mainCur.style.left = mouseX + 'px';
-    mainCur.style.top  = mouseY + 'px';
-  });
+const trailEls = [];
+for (let i = 0; i < TRAIL_LEN; i++) {
+  const el    = document.createElement('div');
+  const size  = Math.max(3, 8 - i * 2);
+  const alpha = ((TRAIL_LEN - i + 1) / (TRAIL_LEN + 1)).toFixed(2);
+  el.style.cssText = `position:fixed;width:${size}px;height:${size}px;pointer-events:none;z-index:${9998-i};background:rgba(0,255,136,${alpha});image-rendering:pixelated;transform:translate(-50%,-50%);`;
+  document.body.appendChild(el);
+  trailEls.push({ el });
+}
 
-  const LERP = [0.28, 0.22, 0.17, 0.13];
-  (function animTrail() {
-    trailPos[0].x += (mouseX - trailPos[0].x) * LERP[0];
-    trailPos[0].y += (mouseY - trailPos[0].y) * LERP[0];
-    for (let i = 1; i < TRAIL_LEN; i++) {
-      trailPos[i].x += (trailPos[i-1].x - trailPos[i].x) * LERP[i];
-      trailPos[i].y += (trailPos[i-1].y - trailPos[i].y) * LERP[i];
-    }
-    trailEls.forEach((t, i) => {
-      t.el.style.left = trailPos[i].x + 'px';
-      t.el.style.top  = trailPos[i].y + 'px';
-    });
-    requestAnimationFrame(animTrail);
-  })();
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX; mouseY = e.clientY;
+  mainCur.style.left = mouseX + 'px';
+  mainCur.style.top  = mouseY + 'px';
 });
+
+const LERP = [0.28, 0.22, 0.17, 0.13];
+(function animTrail() {
+  trailPos[0].x += (mouseX - trailPos[0].x) * LERP[0];
+  trailPos[0].y += (mouseY - trailPos[0].y) * LERP[0];
+  for (let i = 1; i < TRAIL_LEN; i++) {
+    trailPos[i].x += (trailPos[i-1].x - trailPos[i].x) * LERP[i];
+    trailPos[i].y += (trailPos[i-1].y - trailPos[i].y) * LERP[i];
+  }
+  trailEls.forEach((t, i) => {
+    t.el.style.left = trailPos[i].x + 'px';
+    t.el.style.top  = trailPos[i].y + 'px';
+  });
+  requestAnimationFrame(animTrail);
+})();
 
 // ═══════════════════════════════════════════════
 // PIXELS FLOTTANTS EN FOND
 // ═══════════════════════════════════════════════
 
-document.addEventListener('DOMContentLoaded', () => {
-  const bgCols   = ['#00ff88', '#ff3366', '#ffdd00', '#bf00ff', '#00d4ff'];
-  const pixelsEl = document.getElementById('pixels');
-  if (pixelsEl) {
-    for (let i = 0; i < 35; i++) {
-      const p     = document.createElement('div');
-      p.className = 'pixel';
-      const size  = 2 + Math.floor(Math.random() * 4);
-      p.style.cssText = `left:${Math.random()*100}%;background:${bgCols[Math.floor(Math.random()*bgCols.length)]};animation-duration:${6+Math.random()*14}s;animation-delay:${Math.random()*12}s;width:${size}px;height:${size}px;`;
-      pixelsEl.appendChild(p);
-    }
+const bgCols   = ['#00ff88', '#ff3366', '#ffdd00', '#bf00ff', '#00d4ff'];
+const pixelsEl = document.getElementById('pixels');
+if (pixelsEl) {
+  for (let i = 0; i < 35; i++) {
+    const p     = document.createElement('div');
+    p.className = 'pixel';
+    const size  = 2 + Math.floor(Math.random() * 4);
+    p.style.cssText = `left:${Math.random()*100}%;background:${bgCols[Math.floor(Math.random()*bgCols.length)]};animation-duration:${6+Math.random()*14}s;animation-delay:${Math.random()*12}s;width:${size}px;height:${size}px;`;
+    pixelsEl.appendChild(p);
   }
-});
+}

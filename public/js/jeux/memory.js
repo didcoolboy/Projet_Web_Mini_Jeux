@@ -67,6 +67,9 @@ function checkMatch() {
         overlayMsg.textContent = moves + ' COUPS !';
         startBtn.textContent = '▶ REJOUER';
         overlay.style.display = 'flex';
+        
+        // Enregistrer le score (nombre de coups)
+        saveScore(moves, 'memory');
       }, 600);
     }
   } else {

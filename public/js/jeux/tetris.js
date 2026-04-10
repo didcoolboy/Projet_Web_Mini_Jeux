@@ -179,6 +179,9 @@ function gameOver() {
   overlayMsg.textContent = 'SCORE : ' + score;
   startBtn.textContent = '▶ REJOUER';
   overlay.style.display = 'flex';
+  
+  // Enregistrer le score
+  saveScore(score, 'tetris');
 }
 
 function startGame() {

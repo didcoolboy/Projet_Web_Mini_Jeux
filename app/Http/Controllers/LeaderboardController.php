@@ -31,12 +31,12 @@ class LeaderboardController extends Controller
 
         // ─── Construction du classement ───────────────────────
         $leaderboard = $this->buildLeaderboard(
-            me: $me,
-            games: $games,
-            gameSlug: $gameSlug,
-            filter: $filter,
-            friendIds: $friendIds,
-            search: $search,
+            $me,
+            $games,
+            $gameSlug,
+            $filter,
+            $friendIds,
+            $search,
         );
 
         // ─── Stats personnelles ───────────────────────────────
@@ -81,7 +81,7 @@ class LeaderboardController extends Controller
         string $gameSlug,
         string $filter,
         array  $friendIds,
-        string $search,
+        string $search
     ): array {
         // Base : score total ou score d'un jeu précis
         if ($gameSlug === 'all') {
@@ -94,7 +94,7 @@ class LeaderboardController extends Controller
             $query = DB::table('users')
                 ->leftJoin('scores', function ($join) use ($game) {
                     $join->on('users.id', '=', 'scores.user_id')
-                         ->where('scores.game_id', '=', $game?->id ?? 0);
+                         ->where('scores.game_id', '=', $game ? $game->id : 0);
                 })
                 ->select('users.id', 'users.name', DB::raw('COALESCE(SUM(scores.score), 0) as total_score'))
                 ->groupBy('users.id', 'users.name');

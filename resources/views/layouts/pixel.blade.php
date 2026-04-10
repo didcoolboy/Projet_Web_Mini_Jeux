@@ -19,22 +19,31 @@
   {{-- Curseur pixel --}}
   <div id="cur-main"></div>
 
-  {{-- Fond animé --}}
-  <div class="pixels" id="pixels"></div>
+  {{-- Orbes de fond --}}
   <div class="orb orb1"></div>
   <div class="orb orb2"></div>
 
   <div class="container">
 
     <header>
-      <a class="logo" href="{{ route('home') }}">PIXELZONE</a>
+      <a class="logo" href="{{ route('accueil') }}">PIXELZONE</a>
       <nav>
-        <a href="{{ route('home') }}"                         class="{{ request()->routeIs('home')        ? 'active' : '' }}">Accueil</a>
-        <a href="{{ route('jeux') }}"                         class="{{ request()->routeIs('jeux')        ? 'active' : '' }}">Jeux</a>
-        <a href="{{ route('amis.index') }}"                   class="{{ request()->routeIs('amis.*')      ? 'active' : '' }}">Amis</a>
-        <a href="{{ route('profil', auth()->user()->id) }}"   class="{{ request()->routeIs('profil')      ? 'active' : '' }}">Profil</a>
+        <a href="{{ route('accueil') }}"
+           class="{{ request()->routeIs('accueil') ? 'active' : '' }}">Accueil</a>
+        <a href="{{ route('amis.index') }}"
+           class="{{ request()->routeIs('amis.*') ? 'active' : '' }}">Amis</a>
+        <a href="{{ route('profil', auth()->user()->id) }}"
+           class="{{ request()->routeIs('profil*') ? 'active' : '' }}">Profil</a>
+        <form method="POST" action="{{ route('deconnexion') }}" style="display:inline;">
+          @csrf
+          <button type="submit" class="nav-logout">Déconnexion</button>
+        </form>
       </nav>
     </header>
+
+    @if(session('notif'))
+      <div class="flash-notif">{{ session('notif') }}</div>
+    @endif
 
     @yield('content')
 

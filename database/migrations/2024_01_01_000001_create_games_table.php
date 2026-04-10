@@ -21,7 +21,6 @@ return new class extends Migration
             ['slug' => 'snake',    'name' => 'Snake',    'icon' => '🐍', 'created_at' => now(), 'updated_at' => now()],
             ['slug' => 'tetris',   'name' => 'Tetris',   'icon' => '🧱', 'created_at' => now(), 'updated_at' => now()],
             ['slug' => 'pong',     'name' => 'Pong',     'icon' => '🏓', 'created_at' => now(), 'updated_at' => now()],
-            ['slug' => 'asteroids','name' => 'Asteroids','icon' => '☄️', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 
