@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AimRush</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <div class="game-frame">
+        <section class="hero-card screen overlay-screen screen--active" id="start-screen" aria-labelledby="title-start">
+          <div class="hero-copy">
+            <p class="eyebrow">Pixel Arcade</p>
+            <h1 id="title-start">AimRush</h1>
+            <p class="creator-line">Créateur : Cambier Thomas</p>
+            <p class="lead">
+              Clique les cibles le plus vite possible pour gagner des points.
+            </p>
+          </div>
+
+          <div class="controls-panel">
+            <label class="field">
+              <span>Difficulté</span>
+              <select id="difficulty-select">
+                <option value="easy">Facile</option>
+                <option value="medium" selected>Moyen</option>
+                <option value="hard">Difficile</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Durée de partie</span>
+              <select id="duration-select">
+                <option value="30" selected>30 secondes</option>
+                <option value="45">45 secondes</option>
+                <option value="60">60 secondes</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Skin des cibles</span>
+              <select id="skin-select">
+                <option value="classic" selected>Classique</option>
+                <option value="orb">Orbe</option>
+                <option value="shard">Éclat</option>
+                <option value="pulse">Pulse</option>
+              </select>
+            </label>
+
+            <button class="primary-button" id="start-button">Démarrer</button>
+          </div>
+        </section>
+
+        <section class="screen game-screen" id="game-screen" aria-labelledby="game-title" hidden>
+          <header class="hud">
+            <div>
+              <p class="hud-label">Score</p>
+              <strong id="score-value">0</strong>
+            </div>
+            <div>
+              <p class="hud-label">Temps</p>
+              <strong id="time-value">30.0</strong>
+            </div>
+            <div>
+              <p class="hud-label">Précision</p>
+              <strong id="accuracy-value">100%</strong>
+            </div>
+            <div>
+              <p class="hud-label">Réussites</p>
+              <strong id="hits-value">0</strong>
+            </div>
+          </header>
+
+          <div class="stage-banner" id="stage-banner">
+            <h2 id="game-title">AimRush</h2>
+            <p id="game-hint">Clique rapidement avant que la cible ne disparaisse.</p>
+          </div>
+
+          <div class="game-stage" id="game-stage" role="application" aria-label="Zone de jeu d'Aim Trainer">
+            <button class="target" id="target" aria-label="Cible" hidden>
+              <span class="target-inner" aria-hidden="true"></span>
+            </button>
+          </div>
+        </section>
+
+        <section class="hero-card screen overlay-screen" id="end-screen" aria-labelledby="title-end" hidden>
+          <div class="hero-copy">
+            <p class="eyebrow">Fin de partie</p>
+            <h2 id="title-end">Résultats</h2>
+            <p class="creator-line">Créateur : Cambier Thomas</p>
+            <p class="lead" id="final-message">Ton score final est prêt.</p>
+          </div>
+
+          <div class="results-grid">
+            <div class="result-tile">
+              <span>Score final</span>
+              <strong id="final-score">0</strong>
+            </div>
+            <div class="result-tile">
+              <span>Précision</span>
+              <strong id="final-accuracy">0%</strong>
+            </div>
+            <div class="result-tile">
+              <span>Temps de réaction moyen</span>
+              <strong id="final-reaction">0 ms</strong>
+            </div>
+            <div class="result-tile">
+              <span>Cibles touchées</span>
+              <strong id="final-hits">0</strong>
+            </div>
+            <div class="result-tile">
+              <span>Clics manqués</span>
+              <strong id="final-misses">0</strong>
+            </div>
+          </div>
+
+          <button class="primary-button" id="restart-button">Rejouer</button>
+          <button class="primary-button" id="menu-button">Retour au menu</button>
+        </section>
+      </div>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
