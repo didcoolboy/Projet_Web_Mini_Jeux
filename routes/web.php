@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Score;
+use App\Models\Game;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PublicGameController;
 use App\Http\Controllers\LeaderboardController;
@@ -25,7 +26,12 @@ Route::get('/accueil', function () {
         ->take(10)
         ->get();
 
-    return view('accueil', compact('topScores'));
+    $uploadedGames = Game::query()
+        ->whereNotIn('slug', ['snake', 'morpion', 'tetris', 'pong', 'memory', 'flappy'])
+        ->latest()
+        ->get();
+
+    return view('accueil', compact('topScores', 'uploadedGames'));
 })->name('accueil');
 
 Route::get('/connexion', [AuthController::class, 'showConnexion'])->name('connexion');
@@ -74,7 +80,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/amis/{user}/retirer',        [AmiController::class, 'retirer']) ->name('amis.retirer');
 
     // Enregistrement des scores
-    Route::post('/save-score/{game}', [GameController::class, 'saveScore'])->name('save-score');
+    Route::post('/save-score/{gameSlug}', [GameController::class, 'saveScore'])->name('save-score');
 
 });
 

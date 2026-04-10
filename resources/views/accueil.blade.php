@@ -5,6 +5,12 @@
 @push('styles')
     <link rel="stylesheet" href="{{ asset('css/accueil.css') }}">
     <link rel="stylesheet" href="{{ asset('css/invite.css') }}">
+    <style>
+        .lb-wrap.lb-wrap--single {
+            grid-template-columns: 1fr;
+            max-width: 920px;
+        }
+    </style>
 @endpush
 
 @section('content')
@@ -228,6 +234,26 @@
                 <div class="game-card__glow" style="--gc: rgba(255,221,0,0.15)"></div>
             </div>
 
+            @foreach(($uploadedGames ?? []) as $uploadedGame)
+            <div class="game-card" data-color="#00d4ff">
+                <div class="game-card__screen" style="background:linear-gradient(135deg,#00101a,#001825)">
+                    <span class="game-card__emoji">🎮</span>
+                    <div class="game-card__overlay">
+                        <a href="{{ route('jeux.dynamic', $uploadedGame->slug) }}" class="game-card__play">▶ JOUER</a>
+                    </div>
+                </div>
+                <div class="game-card__body">
+                    <div class="game-card__meta">
+                        <span class="game-card__tag" style="color:var(--neon-b);border-color:rgba(0,212,255,0.3)">NOUVEAU</span>
+                        <span class="game-card__players">{{ auth()->check() ? '👤 CONNECTÉ' : '👤 INVITÉ' }}</span>
+                    </div>
+                    <h3 class="game-card__name">{{ $uploadedGame->name }}</h3>
+                    <p class="game-card__desc">{{ $uploadedGame->description ?: 'Nouveau jeu ajouté par l\'administration.' }}</p>
+                </div>
+                <div class="game-card__glow" style="--gc: rgba(0,212,255,0.15)"></div>
+            </div>
+            @endforeach
+
         </div>
     </section>
 
@@ -240,33 +266,7 @@
             </div>
         </div>
 
-        <div class="lb-wrap">
-            @if(isset($topScores) && count($topScores) >= 3)
-            <div class="podium">
-                <div class="podium-card podium-card--2">
-                    <div class="podium-avatar">🥈</div>
-                    <div class="podium-name">{{ $topScores[1]->user->pseudo }}</div>
-                    <div class="podium-game">{{ $topScores[1]->jeu }}</div>
-                    <div class="podium-score" style="color:#c0c0c0">{{ number_format($topScores[1]->score) }} pts</div>
-                    <div class="podium-rank" style="background:#c0c0c0;color:#000">2</div>
-                </div>
-                <div class="podium-card podium-card--1">
-                    <div class="podium-crown">👑</div>
-                    <div class="podium-avatar">🥇</div>
-                    <div class="podium-name">{{ $topScores[0]->user->pseudo }}</div>
-                    <div class="podium-game">{{ $topScores[0]->jeu }}</div>
-                    <div class="podium-score" style="color:var(--neon-y)">{{ number_format($topScores[0]->score) }} pts</div>
-                    <div class="podium-rank" style="background:var(--neon-y);color:#000">1</div>
-                </div>
-                <div class="podium-card podium-card--3">
-                    <div class="podium-avatar">🥉</div>
-                    <div class="podium-name">{{ $topScores[2]->user->pseudo }}</div>
-                    <div class="podium-game">{{ $topScores[2]->jeu }}</div>
-                    <div class="podium-score" style="color:#cd7f32">{{ number_format($topScores[2]->score) }} pts</div>
-                    <div class="podium-rank" style="background:#cd7f32;color:#000">3</div>
-                </div>
-            </div>
-            @endif
+        <div class="lb-wrap lb-wrap--single">
 
             <div class="lb-table">
                 <div class="lb-table__head">

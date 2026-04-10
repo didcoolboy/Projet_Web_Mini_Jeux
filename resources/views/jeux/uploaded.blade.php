@@ -67,7 +67,7 @@
 <body>
     <header class="topbar">
         <h1 class="title">{{ $game->name }}</h1>
-        <a class="btn-back" href="{{ route('accueil.invite') }}">Retour</a>
+        <a class="btn-back" href="{{ $backUrl }}">Retour</a>
     </header>
 
     <main class="frame-wrap">
