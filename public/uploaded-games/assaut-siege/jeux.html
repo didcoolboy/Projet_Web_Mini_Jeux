@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚔️ Château Siège</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #1a0a00;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+#gameContainer { position: relative; width: 100vw; height: 100vh; }
+canvas { display: block; cursor: crosshair; }
+
+/* Top HUD */
+#topBar {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 20px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.85), rgba(0,0,0,0.4));
+  border-bottom: 2px solid #8B6914;
+  pointer-events: none;
+}
+#score { color: #FFD700; font-size: 20px; font-weight: bold; text-shadow: 0 0 10px rgba(255,215,0,0.6); }
+#levelInfo { color: #F5DEB3; font-size: 16px; text-align: center; }
+#shotInfo { color: #DEB887; font-size: 15px; text-align: right; }
+
+/* Rock selector */
+#rockSelector {
+  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 10px; pointer-events: all;
+}
+.rockBtn {
+  background: rgba(10,5,0,0.85);
+  border: 2px solid #6B4F10;
+  border-radius: 10px;
+  padding: 8px 14px;
+  color: #D4B483;
+  cursor: pointer;
+  font-family: 'Georgia', serif;
+  font-size: 12px;
+  text-align: center;
+  transition: all 0.18s;
+  min-width: 78px;
+}
+.rockBtn:hover { background: rgba(139,105,20,0.35); border-color: #FFD700; color: #FFE88A; }
+.rockBtn.active {
+  background: rgba(100,70,10,0.7);
+  border-color: #FFD700;
+  color: #FFD700;
+  box-shadow: 0 0 14px rgba(255,215,0,0.35), inset 0 0 8px rgba(255,215,0,0.1);
+}
+.rockBtn.disabled { opacity: 0.35; cursor: not-allowed; filter: grayscale(0.6); }
+.rockEmoji { font-size: 22px; display: block; margin-bottom: 3px; }
+.rockName { font-size: 11px; font-weight: bold; display: block; }
+.rockCount { font-size: 11px; color: #AAA; display: block; margin-top: 2px; }
+.rockBtn.active .rockCount { color: #FFD700; }
+
+/* Power bar */
+#powerContainer {
+  position: absolute; bottom: 108px; left: 50%; transform: translateX(-50%);
+  text-align: center; display: none; pointer-events: none;
+}
+#powerLabel { color: #FFD700; font-size: 13px; margin-bottom: 5px; letter-spacing: 1px; }
+#powerBar {
+  width: 220px; height: 14px;
+  background: rgba(0,0,0,0.6);
+  border: 1px solid #8B6914;
+  border-radius: 7px;
+  overflow: hidden;
+}
+#powerFill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, #00CC44, #FFCC00, #FF4400);
+  border-radius: 7px;
+  transition: none;
+}
+
+/* Hint text */
+#hint {
+  position: absolute; bottom: 106px; left: 50%; transform: translateX(-50%);
+  color: rgba(220,200,150,0.5);
+  font-size: 12px;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* Overlay */
+#overlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(5,2,0,0.92);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  pointer-events: all;
+  z-index: 100;
+}
+#overlay h1 {
+  font-size: 52px;
+  text-shadow: 0 0 30px currentColor;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+#overlay .subtitle {
+  color: #F5DEB3;
+  font-size: 17px;
+  margin-bottom: 10px;
+  text-align: center;
+  max-width: 550px;
+  line-height: 1.7;
+}
+#overlay .tips {
+  color: #A88A50;
+  font-size: 13px;
+  text-align: center;
+  margin-bottom: 6px;
+  max-width: 520px;
+  line-height: 1.8;
+}
+.overlayBtn {
+  margin-top: 22px;
+  background: #6B0F0F;
+  border: 2px solid #FFD700;
+  color: #FFD700;
+  padding: 14px 36px;
+  font-size: 18px;
+  font-family: 'Georgia', serif;
+  cursor: pointer;
+  border-radius: 5px;
+  letter-spacing: 2px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.overlayBtn:hover {
+  background: #9B1A1A;
+  box-shadow: 0 0 24px rgba(255,215,0,0.5);
+  transform: scale(1.04);
+}
+.overlayBtn.secondary {
+  background: #1a1a1a;
+  border-color: #888;
+  color: #AAA;
+  font-size: 14px;
+  padding: 10px 24px;
+  margin-top: 10px;
+}
+.overlayBtn.secondary:hover { background: #333; box-shadow: none; transform: none; }
+
+/* Decorative divider */
+.divider {
+  width: 300px; height: 2px;
+  background: linear-gradient(to right, transparent, #8B6914, transparent);
+  margin: 14px 0;
+}
+</style>
+</head>
+<body>
+<div id="gameContainer">
+  <canvas id="gameCanvas"></canvas>
+
+  <div id="topBar">
+    <div id="score">⚔️ Score: 0</div>
+    <div id="levelInfo">Niveau 1 — Siège du Manoir</div>
+    <div id="shotInfo">Tirs restants: 8</div>
+  </div>
+
+  <div id="powerContainer">
+    <div id="powerLabel">⚡ PUISSANCE</div>
+    <div id="powerBar"><div id="powerFill"></div></div>
+  </div>
+  <div id="hint">Cliquez pour viser · La distance du curseur = puissance · Relâchez pour tirer</div>
+
+  <div id="rockSelector">
+    <button class="rockBtn active" id="btn_classic" onclick="selectRock('classic')">
+      <span class="rockEmoji">🪨</span>
+      <span class="rockName">Classique</span>
+      <span class="rockCount" id="cnt_classic">∞</span>
+    </button>
+    <button class="rockBtn" id="btn_small" onclick="selectRock('small')">
+      <span class="rockEmoji">💨</span>
+      <span class="rockName">Rapide</span>
+      <span class="rockCount" id="cnt_small">3</span>
+    </button>
+    <button class="rockBtn" id="btn_big" onclick="selectRock('big')">
+      <span class="rockEmoji">💣</span>
+      <span class="rockName">Lourd</span>
+      <span class="rockCount" id="cnt_big">2</span>
+    </button>
+    <button class="rockBtn" id="btn_explosive" onclick="selectRock('explosive')">
+      <span class="rockEmoji">💥</span>
+      <span class="rockName">Explosif</span>
+      <span class="rockCount" id="cnt_explosive">1</span>
+    </button>
+    <button class="rockBtn" id="btn_fire" onclick="selectRock('fire')">
+      <span class="rockEmoji">🔥</span>
+      <span class="rockName">Enflammé</span>
+      <span class="rockCount" id="cnt_fire">0</span>
+    </button>
+  </div>
+
+  <!-- OVERLAY menu -->
+  <div id="overlay">
+    <h1 style="color:#FFD700">⚔️ CHÂTEAU SIÈGE ⚔️</h1>
+    <div class="divider"></div>
+    <p class="subtitle">Détruisez le château ennemi et éliminez tous les chevaliers pour passer au niveau suivant !</p>
+    <p class="tips">
+      🪨 <b>Classique</b> : équilibré &nbsp;|&nbsp; 💨 <b>Rapide</b> : petite mais véloce<br>
+      💣 <b>Lourd</b> : énorme masse &nbsp;|&nbsp; 💥 <b>Explosif</b> : explosion à impact<br>
+      🔥 <b>Enflammé</b> : brûle les blocs en bois (disponible niv. 2+)
+    </p>
+    <p class="tips" style="color:#888;font-size:12px;">Cliquez et déplacez le curseur pour viser · La distance = puissance · Relâchez pour tirer</p>
+    <button class="overlayBtn" onclick="startGame()">⚔️ Commencer le Siège</button>
+  </div>
+</div>
+
+<script>
+// ─── Canvas Setup ──────────────────────────────────────────────
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// Shorthand
+const W = () => canvas.width;
+const H = () => canvas.height;
+const GROUND = () => canvas.height - 80;
+
+// ─── Game State ─────────────────────────────────────────────────
+let gameActive = false;
+let score = 0;
+let currentLevel = 0;
+let blocks = [];
+let projectiles = [];
+let particles = [];
+let enemies = [];
+let selectedRock = 'classic';
+let rocks = {};
+let isCharging = false;
+let chargeStart = 0;
+let mousePos = { x: 200, y: 300 };
+let aimActive = false;
+let launched = false;
+let launchCooldown = 0;
+let showResult = false;
+let frameCount = 0;
+
+// Stars seed
+const STARS = Array.from({length: 80}, () => ({
+  x: Math.random(), y: Math.random() * 0.7,
+  r: Math.random() * 1.6 + 0.3,
+  bright: Math.random()
+}));
+
+// ─── Rock Definitions ───────────────────────────────────────────
+const ROCK_TYPES = {
+  classic:  { radius: 13, mass: 1.0, speedMult: 1.0,  color: '#999',    darkColor: '#666', label: 'Classique',  damage: 2 },
+  small:    { radius: 7,  mass: 0.35,speedMult: 1.85,  color: '#BBB',    darkColor: '#888', label: 'Rapide',     damage: 1 },
+  big:      { radius: 22, mass: 3.2, speedMult: 0.65,  color: '#5A5A5A', darkColor: '#333', label: 'Lourd',      damage: 3 },
+  explosive:{ radius: 14, mass: 1.1, speedMult: 1.05, color: '#CC5500', darkColor: '#882200', label: 'Explosif', damage: 2 },
+  fire:     { radius: 12, mass: 0.8, speedMult: 1.3,  color: '#FF8800', darkColor: '#CC4400', label: 'Enflammé', damage: 2 },
+};
+
+// ─── Level Definitions ──────────────────────────────────────────
+function mkBlock(x, y, w, h, type) {
+  const hp = type === 'reinforced' ? 6 : type === 'stone' ? 3 : 1;
+  return { x, y, w, h, type, hp, maxHp: hp, vx: 0, vy: 0, dead: false, burning: false, burnTimer: 0, grounded: false };
+}
+
+// Resolve stacking: blocks settle on top of each other and on ground
+function resolveBlockStacking() {
+  const GND = GROUND();
+  const alive = blocks.filter(b => !b.dead);
+  for (let iter = 0; iter < 4; iter++) {
+    for (let i = 0; i < alive.length; i++) {
+      const a = alive[i];
+      // Ground
+      if (a.y + a.h >= GND) {
+        a.y = GND - a.h;
+        if (a.vy > 0) { a.vy *= -0.15; a.vx *= 0.7; }
+        a.grounded = true;
+      }
+      // Block-on-block: a falls onto b
+      for (let j = 0; j < alive.length; j++) {
+        if (i === j) continue;
+        const b = alive[j];
+        const xOverlap = Math.min(a.x + a.w, b.x + b.w) - Math.max(a.x, b.x);
+        if (xOverlap > 8 &&
+            a.y + a.h > b.y && a.y + a.h < b.y + b.h * 0.7 &&
+            a.vy >= 0) {
+          a.y = b.y - a.h;
+          if (a.vy > 0) { a.vy *= -0.1; a.vx *= 0.75; }
+          a.grounded = true;
+        }
+      }
+    }
+  }
+}
+
+// Check if a block has support. Two rules:
+// 1. Thick blocks (walls, h>=20): need a block directly below OR be on ground
+// 2. Thin blocks (slabs, h<20): need at least one adjacent block on either side OR below
+function applyUnsupportedFall() {
+  const GND = GROUND();
+  const alive = blocks.filter(b => !b.dead);
+
+  alive.forEach(b => {
+    b.grounded = false;
+
+    // Always grounded if touching the ground
+    if (b.y + b.h >= GND - 2) { b.grounded = true; return; }
+
+    const isSlab = b.h < 20;
+
+    if (isSlab) {
+      // Slabs are supported if ANY living block touches them:
+      // - a block below (x overlap > 10px, bottom of slab sits on top of that block)
+      // - a block to the left or right that is adjacent and at the same height range
+      for (const other of alive) {
+        if (other === b) continue;
+        // Support from below
+        const xOverlapBelow = Math.min(b.x + b.w, other.x + other.w) - Math.max(b.x, other.x);
+        if (xOverlapBelow > 10 && Math.abs((b.y + b.h) - other.y) < 6) {
+          b.grounded = true; return;
+        }
+        // Support from side (wall holding a floor slab): side adjacency within 6px, height overlap
+        const xGap = Math.max(b.x, other.x) - Math.min(b.x + b.w, other.x + other.w);
+        const yOverlap = Math.min(b.y + b.h, other.y + other.h) - Math.max(b.y, other.y);
+        if (xGap >= -2 && xGap < 8 && yOverlap > 4) {
+          b.grounded = true; return;
+        }
+      }
+    } else {
+      // Thick blocks: need a block directly below with meaningful X overlap
+      for (const other of alive) {
+        if (other === b) continue;
+        const xOverlap = Math.min(b.x + b.w, other.x + other.w) - Math.max(b.x, other.x);
+        const minOverlap = b.w * 0.25; // 25% of own width
+        if (xOverlap >= minOverlap && Math.abs((b.y + b.h) - other.y) < 6) {
+          b.grounded = true; return;
+        }
+      }
+    }
+  });
+}
+
+// Helper: build a walled room (left wall, right wall, floor, ceiling)
+function mkRoom(bx, GND, S, col, row, wType, fType) {
+  // col/row = grid position, wType = wall type, fType = floor/ceil type
+  const x = bx + col * S, y = GND - S - row * S;
+  return [
+    mkBlock(x, y, 38, S, wType)
+  ];
+}
+
+function genLevel1(W, GND) {
+  const S = 40;
+  const bx = Math.floor(W * 0.60);
+  const b = [];
+
+  // ── Main Hall: 4 wide, 3 tall ──
+  // Floor row
+  for (let c = 0; c < 4; c++) b.push(mkBlock(bx + c*S, GND - S, 38, S, 'stone'));
+  // Left & right walls rows 1-2 (hollow inside = cols 1-2)
+  for (let r = 1; r <= 2; r++) {
+    b.push(mkBlock(bx + 0*S, GND - S - r*S, 38, S, 'wood'));
+    b.push(mkBlock(bx + 3*S, GND - S - r*S, 38, S, 'wood'));
+  }
+  // Roof
+  for (let c = 0; c < 4; c++) b.push(mkBlock(bx + c*S, GND - S*3 - 14, 38, 14, 'stone'));
+
+  // ── Right Tower: 2 wide, 6 tall ──
+  const tx = bx + S*5;
+  for (let r = 0; r < 6; r++) {
+    b.push(mkBlock(tx,      GND - S - r*S, 38, S, r < 2 ? 'stone' : 'wood'));
+    b.push(mkBlock(tx + S,  GND - S - r*S, 38, S, r < 2 ? 'stone' : 'wood'));
+  }
+  // Tower internal floor at row 3
+  b.push(mkBlock(tx, GND - S*3 - 10, 38*2, 10, 'stone'));
+  // Tower roof
+  b.push(mkBlock(tx - 4, GND - S*6 - 14, S*2 + 8, 14, 'stone'));
+
+  // Bridge walkway
+  b.push(mkBlock(bx + S*4, GND - S*2, S, 10, 'wood'));
+  return b;
+}
+
+function genLevel2(W, GND) {
+  const S = 40;
+  const bx = Math.floor(W * 0.55);
+  const b = [];
+
+  // ── Main Keep: 5 wide, 2 rooms stacked ──
+  // Ground floor
+  for (let c = 0; c < 5; c++) b.push(mkBlock(bx + c*S, GND - S, 38, S, 'stone'));
+  // Walls room 1 (rows 1-2)
+  for (let r = 1; r <= 2; r++) {
+    b.push(mkBlock(bx,       GND - S - r*S, 38, S, 'stone'));
+    b.push(mkBlock(bx + 4*S, GND - S - r*S, 38, S, 'stone'));
+  }
+  // Floor between rooms
+  for (let c = 0; c < 5; c++) b.push(mkBlock(bx + c*S, GND - S*3 - 8, 38, 10, 'stone'));
+  // Walls room 2 (rows 3-4)
+  for (let r = 3; r <= 4; r++) {
+    b.push(mkBlock(bx,       GND - S - r*S, 38, S, 'stone'));
+    b.push(mkBlock(bx + 4*S, GND - S - r*S, 38, S, 'stone'));
+  }
+  // Roof
+  for (let c = 0; c < 5; c++) b.push(mkBlock(bx + c*S, GND - S*5 - 14, 38, 14, 'stone'));
+
+  // ── Left Tower: 2 wide, 7 tall ──
+  const lx = bx - S*3;
+  for (let r = 0; r < 7; r++) {
+    b.push(mkBlock(lx,      GND - S - r*S, 38, S, r < 3 ? 'stone' : 'wood'));
+    b.push(mkBlock(lx + S,  GND - S - r*S, 38, S, r < 3 ? 'stone' : 'wood'));
+  }
+  b.push(mkBlock(lx, GND - S*3 - 8, 38*2, 10, 'stone')); // floor divider
+  b.push(mkBlock(lx - 4, GND - S*7 - 14, S*2 + 8, 14, 'stone'));
+
+  // Bridge
+  b.push(mkBlock(lx + S*2, GND - S*3, S, 10, 'wood'));
+  return b;
+}
+
+function genLevel3(W, GND) {
+  const S = 40;
+  const bx = Math.floor(W * 0.48);
+  const b = [];
+
+  // ── Great Hall: 6 wide, 3 floors ──
+  for (let c = 0; c < 6; c++) b.push(mkBlock(bx + c*S, GND - S, 38, S, 'reinforced'));
+  // Room 1 walls
+  for (let r = 1; r <= 2; r++) {
+    b.push(mkBlock(bx,       GND - S - r*S, 38, S, 'reinforced'));
+    b.push(mkBlock(bx + 5*S, GND - S - r*S, 38, S, 'reinforced'));
+    // Interior divider
+    b.push(mkBlock(bx + 2*S, GND - S - r*S, 38, S, 'wood'));
+    b.push(mkBlock(bx + 3*S, GND - S - r*S, 38, S, 'wood'));
+  }
+  // Floor 1
+  for (let c = 0; c < 6; c++) b.push(mkBlock(bx + c*S, GND - S*3 - 8, 38, 10, 'stone'));
+  // Room 2 walls
+  for (let r = 3; r <= 4; r++) {
+    b.push(mkBlock(bx,       GND - S - r*S, 38, S, 'stone'));
+    b.push(mkBlock(bx + 5*S, GND - S - r*S, 38, S, 'stone'));
+  }
+  // Floor 2
+  for (let c = 0; c < 6; c++) b.push(mkBlock(bx + c*S, GND - S*5 - 8, 38, 10, 'stone'));
+  // Room 3 walls
+  for (let r = 5; r <= 6; r++) {
+    b.push(mkBlock(bx,       GND - S - r*S, 38, S, 'wood'));
+    b.push(mkBlock(bx + 5*S, GND - S - r*S, 38, S, 'wood'));
+  }
+  // Roof
+  for (let c = 0; c < 6; c++) b.push(mkBlock(bx + c*S, GND - S*7, 38, 14, 'stone'));
+
+  // ── Donjon Tower: 3 wide, 8 tall, 2 rooms ──
+  const dx = bx + S*7;
+  for (let r = 0; r < 8; r++) {
+    b.push(mkBlock(dx,      GND - S - r*S, 38, S, r < 4 ? 'reinforced' : 'stone'));
+    b.push(mkBlock(dx + 2*S,GND - S - r*S, 38, S, r < 4 ? 'reinforced' : 'stone'));
+  }
+  // Donjon floor divider
+  for (let c = 0; c < 3; c++) b.push(mkBlock(dx + c*S, GND - S*4 - 8, 38, 10, 'reinforced'));
+  b.push(mkBlock(dx - 4, GND - S*8 - 14, 3*S+8, 14, 'reinforced'));
+  // Bridge
+  b.push(mkBlock(bx + 6*S, GND - S*5, S, 10, 'stone'));
+  return b;
+}
+
+function genLevel4(W, GND) {
+  const S = 40;
+  const bx = Math.floor(W * 0.42);
+  const b = [];
+
+  // ── Massive Fortress: 8 wide, 4 rooms stacked ──
+  for (let c = 0; c < 8; c++) b.push(mkBlock(bx + c*S, GND - S, 38, S, 'reinforced'));
+  const roomH = 2; // each room is 2 rows tall
+  for (let room = 0; room < 4; room++) {
+    const rowStart = room * roomH + 1;
+    // Side walls
+    for (let r = rowStart; r < rowStart + roomH; r++) {
+      b.push(mkBlock(bx,       GND - S - r*S, 38, S, room < 2 ? 'reinforced' : 'stone'));
+      b.push(mkBlock(bx + 7*S, GND - S - r*S, 38, S, room < 2 ? 'reinforced' : 'stone'));
+      // Middle divider at col 3-4
+      b.push(mkBlock(bx + 3*S, GND - S - r*S, 38, S, 'stone'));
+      b.push(mkBlock(bx + 4*S, GND - S - r*S, 38, S, 'stone'));
+    }
+    // Floor between rooms
+    const floorRow = rowStart + roomH;
+    for (let c = 0; c < 8; c++)
+      b.push(mkBlock(bx + c*S, GND - S*floorRow - 8, 38, 10, room < 2 ? 'reinforced' : 'stone'));
+  }
+  // Roof
+  for (let c = 0; c < 8; c++) b.push(mkBlock(bx + c*S, GND - S*9, 38, 14, 'reinforced'));
+
+  // ── Left Flank Tower ──
+  const lx = bx - S*3;
+  for (let r = 0; r < 11; r++) {
+    b.push(mkBlock(lx,      GND - S - r*S, 38, S, r < 6 ? 'reinforced' : 'stone'));
+    b.push(mkBlock(lx + S,  GND - S - r*S, 38, S, r < 6 ? 'reinforced' : 'stone'));
+  }
+  b.push(mkBlock(lx, GND - S*4 - 8, 38*2, 10, 'reinforced'));
+  b.push(mkBlock(lx, GND - S*8 - 8, 38*2, 10, 'reinforced'));
+  b.push(mkBlock(lx - 4, GND - S*11 - 14, S*2+8, 14, 'reinforced'));
+  b.push(mkBlock(lx + S*2, GND - S*4, S, 10, 'reinforced'));
+
+  // ── Right Flank Tower ──
+  const rx = bx + S*9;
+  for (let r = 0; r < 11; r++) {
+    b.push(mkBlock(rx,      GND - S - r*S, 38, S, r < 6 ? 'reinforced' : 'stone'));
+    b.push(mkBlock(rx + S,  GND - S - r*S, 38, S, r < 6 ? 'reinforced' : 'stone'));
+  }
+  b.push(mkBlock(rx, GND - S*4 - 8, 38*2, 10, 'reinforced'));
+  b.push(mkBlock(rx, GND - S*8 - 8, 38*2, 10, 'reinforced'));
+  b.push(mkBlock(rx - 4, GND - S*11 - 14, S*2+8, 14, 'reinforced'));
+  b.push(mkBlock(rx - S, GND - S*4, S, 10, 'reinforced'));
+  return b;
+}
+
+function mkEnemy(xFrac, floorY, hp) {
+  return { xFrac, floorY, hp };
+}
+
+// Enemy positions tuned to sit ON TOP of floor blocks inside rooms
+// floorY = pixels above ground = GND - floorY gives feet Y position
+// Level 1: floor block at row 0 → top at GND-40 → floorY=40
+//          hall roof/floor slab at row 3-14px → top at GND-134 → floorY=134
+//          tower internal floor at row 3-10px → top at GND-130 → floorY=130
+const LEVELS = [
+  {
+    name: 'Siège du Manoir',
+    genBlocks: genLevel1,
+    enemyDefs: [
+      // Main hall ground floor (top of floor block = GND-40), inside cols 1-2
+      mkEnemy(0.622, 40, 1), mkEnemy(0.637, 40, 1),
+      // Main hall 2nd floor (floor slab top = GND-S*3-14 = GND-134), inside
+      mkEnemy(0.627, 134, 1),
+      // Tower ground floor
+      mkEnemy(0.775, 40, 1),
+      // Tower 2nd floor (slab at row3 top = GND-S*3-10 = GND-130)
+      mkEnemy(0.782, 130, 1),
+    ],
+    shots: 10,
+    bonus: { small: 3, big: 2, explosive: 1, fire: 0 }
+  },
+  {
+    name: 'La Tour Renforcée',
+    genBlocks: genLevel2,
+    enemyDefs: [
+      // Keep room 1 ground (GND-40), cols 1-3
+      mkEnemy(0.568, 40, 1), mkEnemy(0.582, 40, 2), mkEnemy(0.596, 40, 1),
+      // Keep room 2 (floor slab top = GND-S*3-8 = GND-128), cols 1-3
+      mkEnemy(0.575, 128, 2), mkEnemy(0.589, 128, 1),
+      // Left tower ground (GND-40)
+      mkEnemy(0.479, 40, 1),
+      // Left tower 2nd floor (slab top = GND-S*3-8 = GND-128)
+      mkEnemy(0.483, 128, 2),
+    ],
+    shots: 13,
+    bonus: { small: 3, big: 2, explosive: 2, fire: 2 }
+  },
+  {
+    name: 'Le Grand Château',
+    genBlocks: genLevel3,
+    enemyDefs: [
+      // Great hall room 1 ground (GND-40)
+      mkEnemy(0.490, 40, 2), mkEnemy(0.500, 40, 1),
+      mkEnemy(0.555, 40, 2), mkEnemy(0.565, 40, 1),
+      // Room 2 (floor slab GND-S*3-8 = GND-128)
+      mkEnemy(0.498, 128, 2), mkEnemy(0.509, 128, 2), mkEnemy(0.553, 128, 2),
+      // Room 3 (floor slab GND-S*5-8 = GND-208)
+      mkEnemy(0.503, 208, 3),
+      // Donjon room 1 (GND-40)
+      mkEnemy(0.718, 40, 2),
+      // Donjon room 2 (floor GND-S*4-8 = GND-168)
+      mkEnemy(0.718, 168, 3),
+    ],
+    shots: 15,
+    bonus: { small: 4, big: 3, explosive: 2, fire: 3 }
+  },
+  {
+    name: 'Forteresse Imprenable',
+    genBlocks: genLevel4,
+    enemyDefs: [
+      // Room 1 ground (GND-40), left and right of divider
+      mkEnemy(0.438, 40, 2), mkEnemy(0.452, 40, 3),
+      mkEnemy(0.530, 40, 2), mkEnemy(0.518, 40, 3),
+      // Room 2 (floor = GND-S*2-8+S = GND-88 approx, actually floor row=2 top = GND-S*3+S-8 = GND-88)
+      mkEnemy(0.440, 88, 3), mkEnemy(0.451, 88, 2),
+      mkEnemy(0.525, 88, 3), mkEnemy(0.514, 88, 2),
+      // Room 3 (floor ~GND-168)
+      mkEnemy(0.441, 168, 4), mkEnemy(0.453, 168, 3),
+      mkEnemy(0.524, 168, 3),
+      // Room 4 (~GND-248)
+      mkEnemy(0.447, 248, 4), mkEnemy(0.519, 248, 3),
+      // Flank towers
+      mkEnemy(0.393, 40, 2), mkEnemy(0.395, 168, 3),
+      mkEnemy(0.605, 40, 2), mkEnemy(0.607, 168, 3),
+    ],
+    shots: 18,
+    bonus: { small: 4, big: 4, explosive: 3, fire: 3 }
+  }
+];
+
+// ─── Load Level ─────────────────────────────────────────────────
+function loadLevel(idx) {
+  currentLevel = idx;
+  const lv = LEVELS[idx];
+  const GND = GROUND();
+
+  blocks = lv.genBlocks(W(), GND);
+  enemies = lv.enemyDefs.map(def => ({
+    x: def.xFrac * W(),
+    y: GND - (def.floorY || 0),
+    hp: def.hp, maxHp: def.hp,
+    dead: false, hitAnim: 0, vx: 0, vy: 0,
+    walkDir: (Math.random() > 0.5 ? 1 : -1),
+    walkTimer: Math.floor(Math.random() * 60)
+  }));
+
+  rocks = { classic: lv.shots, ...lv.bonus };
+  projectiles = [];
+  particles = [];
+  launched = false;
+  aimActive = false;
+  showResult = false;
+  launchCooldown = 0;
+  selectedRock = 'classic';
+
+  document.querySelectorAll('.rockBtn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn_classic').classList.add('active');
+  updateUI();
+}
+
+// ─── UI Updates ─────────────────────────────────────────────────
+function updateUI() {
+  document.getElementById('score').textContent = '⚔️ Score: ' + score;
+  document.getElementById('levelInfo').textContent =
+    `Niveau ${currentLevel + 1} / ${LEVELS.length} — ${LEVELS[currentLevel].name}`;
+  const total = Object.values(rocks).reduce((a, b) => a + b, 0);
+  document.getElementById('shotInfo').textContent = `Tirs restants: ${total}`;
+
+  Object.keys(ROCK_TYPES).forEach(k => {
+    const el = document.getElementById('cnt_' + k);
+    const btn = document.getElementById('btn_' + k);
+    if (!el || !btn) return;
+    el.textContent = k === 'classic' ? rocks[k] : rocks[k];
+    if (k !== 'classic' && rocks[k] <= 0) btn.classList.add('disabled');
+    else btn.classList.remove('disabled');
+  });
+}
+
+function selectRock(type) {
+  if (!gameActive || showResult) return;
+  if (type !== 'classic' && rocks[type] <= 0) return;
+  selectedRock = type;
+  document.querySelectorAll('.rockBtn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn_' + type).classList.add('active');
+}
+
+// ─── Input Handling ─────────────────────────────────────────────
+// New system: click → aim mode, mouse position = direction + power, click again = fire
+// OR: hold and release (classic slingshot feel — distance from catapult = power)
+let aimMode = false; // true when aiming but not yet fired
+
+function startAim(x, y) {
+  if (!gameActive || showResult || launched) return;
+  aimMode = true;
+  aimActive = true;
+  mousePos = { x, y };
+  document.getElementById('powerContainer').style.display = 'block';
+  document.getElementById('hint').style.display = 'none';
+}
+function moveAim(x, y) {
+  mousePos = { x, y };
+}
+function releaseAim() {
+  if (!gameActive || !aimActive) return;
+  fireProjectile();
+}
+
+canvas.addEventListener('mousedown', e => { if (e.button === 0) startAim(e.clientX, e.clientY); });
+canvas.addEventListener('mousemove', e => moveAim(e.clientX, e.clientY));
+canvas.addEventListener('mouseup',   e => { if (e.button === 0) releaseAim(); });
+canvas.addEventListener('touchstart', e => { e.preventDefault(); startAim(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+canvas.addEventListener('touchmove',  e => { e.preventDefault(); moveAim(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+canvas.addEventListener('touchend',   e => { e.preventDefault(); releaseAim(); }, { passive: false });
+
+// ─── Fire Projectile ─────────────────────────────────────────────
+// Power = distance of cursor from catapult (capped). Direction = angle to cursor.
+const MAX_PULL = 280; // max pull distance in px → full power
+
+function getPowerAndDir() {
+  const cat = catapultPos();
+  const dx = mousePos.x - cat.x;
+  const dy = mousePos.y - cat.y;
+  const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  const power = Math.min(1, dist / MAX_PULL);
+  return { dx, dy, dist, power };
+}
+
+function fireProjectile() {
+  if (!aimActive || launched) return;
+
+  const cat = catapultPos();
+  const rt = ROCK_TYPES[selectedRock];
+  const { dx, dy, dist, power } = getPowerAndDir();
+  const speed = power * 28 * rt.speedMult;
+
+  projectiles.push({
+    x: cat.x, y: cat.y - 55,
+    vx: (dx / dist) * speed,
+    vy: (dy / dist) * speed,
+    r: rt.radius, mass: rt.mass,
+    type: selectedRock,
+    color: rt.color,
+    darkColor: rt.darkColor,
+    exploded: false,
+    trail: [],
+    spin: 0, spinSpeed: (Math.random() - 0.5) * 0.3,
+    piercesLeft: selectedRock === 'big' ? 2 : 0, // big rock pierces wood blocks
+    speed: speed
+  });
+
+  rocks[selectedRock]--;
+  if (selectedRock !== 'classic' && rocks[selectedRock] <= 0) selectRock('classic');
+
+  launched = true;
+  aimActive = false;
+  aimMode = false;
+  launchCooldown = 80;
+  document.getElementById('powerContainer').style.display = 'none';
+  spawnParticles(cat.x, cat.y - 55, '#FFD700', 10, false);
+  updateUI();
+}
+
+function catapultPos() {
+  return { x: 160, y: GROUND() };
+}
+
+// ─── Physics ────────────────────────────────────────────────────
+const GRAVITY = 0.48;
+
+function spawnParticles(x, y, color, count, explosive = false) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = explosive ? Math.random() * 14 + 5 : Math.random() * 6 + 1;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - (explosive ? 7 : 2),
+      life: 1,
+      decay: explosive ? 0.025 + Math.random() * 0.02 : 0.035 + Math.random() * 0.03,
+      color,
+      r: explosive ? Math.random() * 7 + 3 : Math.random() * 4 + 2
+    });
+  }
+}
+
+function doExplode(x, y, radius) {
+  spawnParticles(x, y, '#FF6600', 35, true);
+  spawnParticles(x, y, '#FFCC00', 20, true);
+  spawnParticles(x, y, '#FF2200', 15, true);
+
+  blocks.forEach(b => {
+    if (b.dead) return;
+    const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+    const d = Math.sqrt((cx - x) ** 2 + (cy - y) ** 2);
+    if (d < radius) {
+      const dmg = Math.ceil(2 * (1 - d / radius));
+      b.hp -= dmg;
+      if (b.hp <= 0) { killBlock(b); }
+      else { b.vx += (cx - x) / d * 6; b.vy += (cy - y) / d * 6 - 3; }
+    }
+  });
+
+  enemies.forEach(en => {
+    if (en.dead) return;
+    const d = Math.sqrt((en.x - x) ** 2 + (en.y - y) ** 2);
+    if (d < radius) {
+      en.hp -= 2;
+      en.vx += (en.x - x) / d * 12;
+      en.vy -= 10;
+      en.hitAnim = 20;
+      if (en.hp <= 0) killEnemy(en);
+    }
+  });
+}
+
+function doFireSpread(x, y, radius) {
+  blocks.forEach(b => {
+    if (b.dead || b.type !== 'wood') return;
+    const cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+    const d = Math.sqrt((cx - x) ** 2 + (cy - y) ** 2);
+    if (d < radius && !b.burning) {
+      b.burning = true;
+      b.burnTimer = 180 + Math.floor(Math.random() * 120);
+    }
+  });
+  spawnParticles(x, y, '#FF8800', 20, true);
+  spawnParticles(x, y, '#FFFF00', 10, true);
+}
+
+function killBlock(b) {
+  b.dead = true;
+  score += b.type === 'reinforced' ? 20 : b.type === 'stone' ? 15 : 10;
+  spawnParticles(b.x + b.w / 2, b.y + b.h / 2, blockFillColor(b.type), 12);
+  updateUI();
+}
+function killEnemy(en) {
+  en.dead = true;
+  score += 50 + en.maxHp * 20;
+  spawnParticles(en.x, en.y - 20, '#FF4444', 25, true);
+  updateUI();
+}
+
+function circleRect(cx, cy, cr, rx, ry, rw, rh) {
+  const nx = Math.max(rx, Math.min(cx, rx + rw));
+  const ny = Math.max(ry, Math.min(cy, ry + rh));
+  return (cx - nx) ** 2 + (cy - ny) ** 2 < cr * cr;
+}
+
+function updatePhysics() {
+  const GND = GROUND();
+
+  // ── Projectiles ──
+  for (let i = projectiles.length - 1; i >= 0; i--) {
+    const p = projectiles[i];
+    const rt = ROCK_TYPES[p.type];
+
+    // trail
+    p.trail.push({ x: p.x, y: p.y, life: 1 });
+    if (p.trail.length > 14) p.trail.shift();
+    p.trail.forEach(t => t.life -= 0.08);
+
+    p.vy += GRAVITY;
+    p.x  += p.vx;
+    p.y  += p.vy;
+    p.spin += p.spinSpeed;
+
+    // Ground hit
+    if (p.y + p.r >= GND) {
+      if (p.type === 'explosive' && !p.exploded) { p.exploded = true; doExplode(p.x, p.y, 90); }
+      if (p.type === 'fire'      && !p.exploded) { p.exploded = true; doFireSpread(p.x, p.y, 130); }
+      if (p.type === 'big') {
+        // Bounce off ground with shockwave — DON'T remove it
+        p.y = GND - p.r;
+        const impactSpeed = Math.abs(p.vy);
+        p.vy *= -0.45;
+        p.vx *= 0.85;
+        // Shockwave: damage nearby ground-level blocks
+        if (impactSpeed > 3) {
+          blocks.forEach(b => {
+            if (b.dead) return;
+            const cx = b.x + b.w / 2;
+            if (Math.abs(cx - p.x) < 90 && b.y + b.h >= GND - 10) {
+              b.hp -= 1;
+              if (b.hp <= 0) killBlock(b);
+              else spawnParticles(cx, b.y, '#888', 4);
+            }
+          });
+          spawnParticles(p.x, GND, '#666', 20);
+          spawnParticles(p.x, GND, '#AAA', 10);
+        }
+        // Stop rolling when very slow
+        if (Math.abs(p.vy) < 1 && Math.abs(p.vx) < 1) {
+          projectiles.splice(i, 1);
+          scheduleLaunchReset();
+        }
+        continue;
+      }
+      spawnParticles(p.x, GND, '#888', 6);
+      projectiles.splice(i, 1);
+      scheduleLaunchReset();
+      continue;
+    }
+    if (p.x > W() + 200 || p.x < -200 || p.y > H() + 200) {
+      projectiles.splice(i, 1);
+      scheduleLaunchReset();
+      continue;
+    }
+
+    // Block collision
+    let hitSomething = false;
+    for (let j = 0; j < blocks.length; j++) {
+      const b = blocks[j];
+      if (b.dead) continue;
+      if (!circleRect(p.x, p.y, p.r, b.x, b.y, b.w, b.h)) continue;
+
+      if (p.type === 'explosive' && !p.exploded) {
+        p.exploded = true; doExplode(p.x, p.y, 100);
+        projectiles.splice(i, 1); scheduleLaunchReset(); hitSomething = true; break;
+      }
+      if (p.type === 'fire' && !p.exploded) {
+        p.exploded = true; doFireSpread(p.x, p.y, 120);
+        projectiles.splice(i, 1); scheduleLaunchReset(); hitSomething = true; break;
+      }
+
+      // Big rock: NEVER stops from block hits - pierces wood freely, slows on stone/reinforced
+      if (p.type === 'big') {
+        if (b.type === 'wood') {
+          // Smash through wood completely
+          b.hp -= rt.damage;
+          spawnParticles(p.x, p.y, blockFillColor(b.type), 12);
+          if (b.hp <= 0) killBlock(b);
+          else { b.vx += p.vx * 0.5; b.vy += p.vy * 0.4 - 2; }
+          p.vx *= 0.82; p.vy *= 0.82; // barely slow down
+          break; // move on, don't stop
+        } else if (b.type === 'stone') {
+          // Crack stone, deflect a bit but keep rolling
+          b.hp -= rt.damage;
+          spawnParticles(p.x, p.y, blockFillColor(b.type), 14);
+          if (b.hp <= 0) killBlock(b);
+          else { b.vx += p.vx * 0.6; b.vy += p.vy * 0.5 - 3; }
+          // Bounce slightly off the surface normal
+          p.vx *= -0.25; p.vy *= 0.6;
+          break;
+        } else { // reinforced
+          // Bounces harder off reinforced, takes 1 damage but keeps going
+          b.hp -= 1;
+          spawnParticles(p.x, p.y, blockFillColor(b.type), 10);
+          if (b.hp <= 0) killBlock(b);
+          else { b.vx += p.vx * 0.3; b.vy += p.vy * 0.3 - 2; }
+          p.vx *= -0.4; p.vy *= 0.5;
+          break;
+        }
+      }
+
+      // Normal rocks
+      b.hp -= rt.damage;
+      if (b.type === 'wood' && p.type === 'fire') { b.burning = true; b.burnTimer = 220; }
+      spawnParticles(p.x, p.y, blockFillColor(b.type), 7);
+      if (b.hp <= 0) killBlock(b);
+      else { b.vx += p.vx * 0.25; b.vy += p.vy * 0.25 - 1.5; }
+
+      const spd = Math.sqrt(p.vx ** 2 + p.vy ** 2);
+      p.vx *= -0.35; p.vy *= -0.45;
+      if (spd < 4) { projectiles.splice(i, 1); scheduleLaunchReset(); hitSomething = true; break; }
+      break;
+    }
+    if (hitSomething) continue;
+
+    // Enemy collision
+    for (let j = 0; j < enemies.length; j++) {
+      const en = enemies[j];
+      if (en.dead) continue;
+      const d = Math.sqrt((p.x - en.x) ** 2 + (p.y - (en.y - 22)) ** 2);
+      if (d < p.r + 18) {
+        en.hp -= rt.damage;
+        en.hitAnim = 18;
+        en.vx += p.vx * 0.7;
+        en.vy += p.vy * 0.4 - 6;
+        spawnParticles(en.x, en.y - 30, '#FF3333', 12);
+        if (en.hp <= 0) killEnemy(en);
+        projectiles.splice(i, 1); scheduleLaunchReset(); hitSomething = true; break;
+      }
+    }
+  }
+
+// ── Blocks Physics ──
+// 1. Determine which blocks are supported (ground, or block beneath with x overlap)
+applyUnsupportedFall();
+
+// 2. Move unsupported blocks, track which ones are newly falling fast
+const fallingFast = [];
+blocks.forEach(b => {
+  if (b.dead) return;
+  if (b.burning) {
+    b.burnTimer--;
+    if (b.burnTimer % 6 === 0) spawnParticles(b.x + Math.random() * b.w, b.y + Math.random() * 10, '#FF6600', 2);
+    if (b.burnTimer <= 0) killBlock(b);
+  }
+  if (!b.grounded) {
+    b.vy += GRAVITY * 0.6;
+  }
+  const wasMovingFast = b.vy > 6;
+  if (Math.abs(b.vx) > 0.05 || Math.abs(b.vy) > 0.05 || !b.grounded) {
+    b.x += b.vx; b.y += b.vy;
+    b.vx *= 0.82; b.vy *= 0.9;
+  }
+  if (wasMovingFast && b.grounded) fallingFast.push(b); // just landed hard
+});
+resolveBlockStacking();
+
+// 3. Falling blocks hurt enemies beneath them
+if (fallingFast.length > 0) {
+  enemies.forEach(en => {
+    if (en.dead) return;
+    fallingFast.forEach(fb => {
+      if (fb.dead) return;
+      // enemy is underneath this block (X overlap, block landed on or near them)
+      const xOverlap = en.x > fb.x - 10 && en.x < fb.x + fb.w + 10;
+      const yClose   = Math.abs((fb.y + fb.h) - en.y) < 60;
+      if (xOverlap && yClose) {
+        const dmg = fb.type === 'reinforced' ? 2 : fb.type === 'stone' ? 1 : 1;
+        en.hp -= dmg;
+        en.hitAnim = 20;
+        spawnParticles(en.x, en.y - 20, '#FF4444', 8);
+        if (en.hp <= 0) killEnemy(en);
+      }
+    });
+  });
+}
+
+  // ── Enemies Physics ──
+  enemies.forEach(en => {
+    if (en.dead) return;
+    const GND2 = GROUND();
+
+    // Always apply gravity
+    en.vy += GRAVITY;
+    en.x += en.vx; en.y += en.vy;
+    en.vx *= 0.85;
+
+    // Find the highest block surface the enemy is standing on
+    let floorSurface = GND2; // default = ground
+    blocks.forEach(b => {
+      if (b.dead) return;
+      // Is enemy above this block with X overlap?
+      if (en.x > b.x - 8 && en.x < b.x + b.w + 8) {
+        const top = b.y; // top surface of block
+        if (top < floorSurface && top >= en.y - 5) {
+          floorSurface = top;
+        }
+      }
+    });
+
+    if (en.y >= floorSurface) {
+      en.y = floorSurface;
+      en.vy *= -0.15;
+      en.vx *= 0.75;
+    }
+
+    if (en.hitAnim > 0) en.hitAnim--;
+    en.walkTimer++;
+    if (en.walkTimer > 80) { en.walkDir *= -1; en.walkTimer = 0; }
+  });
+
+  // ── Particles Physics ──
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.vy += GRAVITY * 0.35;
+    p.x += p.vx; p.y += p.vy;
+    p.vx *= 0.94;
+    p.life -= p.decay;
+    if (p.life <= 0) particles.splice(i, 1);
+  }
+}
+
+let launchResetTimer = null;
+function scheduleLaunchReset() {
+  clearTimeout(launchResetTimer);
+  launchResetTimer = setTimeout(() => {
+    if (projectiles.length === 0) { launched = false; document.getElementById('hint').style.display = 'block'; }
+  }, 600);
+}
+
+// ─── Win / Lose Check ──────────────────────────────────────────
+function checkWinLose() {
+  if (showResult || !gameActive) return;
+  const aliveEnemies = enemies.filter(e => !e.dead);
+  const totalAmmo = Object.values(rocks).reduce((a, b) => a + b, 0);
+
+  if (aliveEnemies.length === 0) {
+    showResult = true;
+    score += totalAmmo * 8;
+    showEndOverlay(true);
+  } else if (totalAmmo <= 0 && projectiles.length === 0 && !launched) {
+    showResult = true;
+    showEndOverlay(false);
+  }
+}
+
+function showEndOverlay(win) {
+  const ov = document.getElementById('overlay');
+  ov.style.display = 'flex';
+  if (win) {
+    const hasNext = currentLevel < LEVELS.length - 1;
+    ov.innerHTML = `
+      <h1 style="color:#FFD700">🏆 Victoire !</h1>
+      <div class="divider"></div>
+      <p class="subtitle">Château conquis ! Bravo, seigneur !</p>
+      <p class="subtitle" style="font-size:22px;color:#FFD700">Score: ${score}</p>
+      ${hasNext
+        ? `<button class="overlayBtn" onclick="nextLevel()">⚔️ Niveau Suivant</button>`
+        : `<p class="subtitle" style="color:#FFD700;font-size:20px">🎉 Vous avez conquis tous les châteaux !</p>
+           <button class="overlayBtn" onclick="restartGame()">Rejouer depuis le début</button>`}
+      <button class="overlayBtn secondary" onclick="restartGame()">Menu principal</button>`;
+  } else {
+    ov.innerHTML = `
+      <h1 style="color:#CC1111">💀 Défaite !</h1>
+      <div class="divider"></div>
+      <p class="subtitle">Plus de munitions... Les défenseurs ont résisté !</p>
+      <p class="subtitle" style="font-size:20px;color:#FFD700">Score: ${score}</p>
+      <button class="overlayBtn" onclick="retryLevel()">↩ Réessayer ce niveau</button>
+      <button class="overlayBtn secondary" onclick="restartGame()">Menu principal</button>`;
+  }
+}
+
+function startGame()  { document.getElementById('overlay').style.display = 'none'; score = 0; loadLevel(0); gameActive = true; }
+function nextLevel()  { document.getElementById('overlay').style.display = 'none'; loadLevel(currentLevel + 1); }
+function retryLevel() { document.getElementById('overlay').style.display = 'none'; loadLevel(currentLevel); }
+function restartGame(){ document.getElementById('overlay').style.display = 'none'; score = 0; loadLevel(0); gameActive = true; }
+
+// ─── Drawing ────────────────────────────────────────────────────
+function blockFillColor(type) {
+  if (type === 'wood')       return '#7A3B10';
+  if (type === 'stone')      return '#777';
+  if (type === 'reinforced') return '#3A4455';
+  return '#7A3B10';
+}
+
+function drawBackground() {
+  const GND = GROUND();
+  // Sky gradient
+  const sky = ctx.createLinearGradient(0, 0, 0, GND);
+  sky.addColorStop(0, '#060c1e');
+  sky.addColorStop(0.55, '#0d1b3e');
+  sky.addColorStop(1, '#1e3060');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W(), GND);
+
+  // Stars
+  STARS.forEach(s => {
+    const flicker = 0.5 + 0.5 * Math.sin(frameCount * 0.02 + s.bright * 50);
+    ctx.globalAlpha = 0.3 + 0.6 * flicker * s.bright;
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.arc(s.x * W(), s.y * GND, s.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+
+  // Moon
+  ctx.fillStyle = '#FFFFF0';
+  ctx.beginPath(); ctx.arc(W() - 110, 80, 38, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#0d1b3e';
+  ctx.beginPath(); ctx.arc(W() - 95, 70, 32, 0, Math.PI * 2); ctx.fill();
+
+  // Distant hills silhouette
+  ctx.fillStyle = '#080d1a';
+  ctx.beginPath();
+  ctx.moveTo(0, GND);
+  const npts = 20;
+  for (let i = 0; i <= npts; i++) {
+    const xp = (i / npts) * W();
+    const yp = GND - 40 - Math.sin(i * 0.9 + 1) * 35 - Math.sin(i * 1.7) * 25;
+    ctx.lineTo(xp, yp);
+  }
+  ctx.lineTo(W(), GND);
+  ctx.closePath();
+  ctx.fill();
+
+  // Ground
+  ctx.fillStyle = '#1E1008';
+  ctx.fillRect(0, GND, W(), H() - GND);
+  const grd = ctx.createLinearGradient(0, GND, 0, GND + 12);
+  grd.addColorStop(0, '#3d2e10');
+  grd.addColorStop(1, '#2a1d08');
+  ctx.fillStyle = grd;
+  ctx.fillRect(0, GND, W(), 14);
+
+  // Grass tufts
+  ctx.strokeStyle = '#4a3a15';
+  ctx.lineWidth = 1.5;
+  for (let x = 10; x < W(); x += 18) {
+    const jitter = Math.sin(x * 0.1) * 4;
+    ctx.beginPath();
+    ctx.moveTo(x, GND + 1);
+    ctx.lineTo(x + 3, GND - 7 + jitter);
+    ctx.lineTo(x + 6, GND + 1);
+    ctx.stroke();
+  }
+}
+
+function drawBlock(b) {
+  if (b.dead) return;
+  const ratio = b.hp / b.maxHp;
+
+  const fills = {
+    wood:       ['#8B4513', '#6B3210', '#AA5520'],
+    stone:      ['#787878', '#555555', '#9A9A9A'],
+    reinforced: ['#3A4455', '#222233', '#5A6475']
+  };
+  const [fill, dark, light] = fills[b.type] || fills.wood;
+
+  // Base fill
+  ctx.fillStyle = fill;
+  ctx.fillRect(b.x, b.y, b.w, b.h);
+
+  // Bevel highlight top
+  ctx.fillStyle = light;
+  ctx.fillRect(b.x, b.y, b.w, 3);
+  ctx.fillRect(b.x, b.y, 3, b.h);
+
+  // Bevel shadow bottom
+  ctx.fillStyle = dark;
+  ctx.fillRect(b.x, b.y + b.h - 3, b.w, 3);
+  ctx.fillRect(b.x + b.w - 3, b.y, 3, b.h);
+
+  // Wood grain
+  if (b.type === 'wood') {
+    ctx.strokeStyle = dark;
+    ctx.lineWidth = 0.8;
+    ctx.beginPath();
+    for (let y = b.y + 10; y < b.y + b.h - 4; y += 10) {
+      ctx.moveTo(b.x + 3, y); ctx.lineTo(b.x + b.w - 3, y);
+    }
+    ctx.stroke();
+  }
+
+  // Stone texture
+  if (b.type === 'stone') {
+    ctx.strokeStyle = dark;
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(b.x + 4, b.y + 4, b.w - 8, b.h - 8);
+  }
+
+  // Reinforced bolts
+  if (b.type === 'reinforced') {
+    ctx.fillStyle = '#8899AA';
+    [[b.x+4, b.y+4],[b.x+b.w-8,b.y+4],[b.x+4,b.y+b.h-8],[b.x+b.w-8,b.y+b.h-8]].forEach(([bx2,by2]) => {
+      ctx.beginPath(); ctx.arc(bx2+2, by2+2, 3, 0, Math.PI*2); ctx.fill();
+    });
+  }
+
+  // Damage overlay & cracks
+  if (ratio < 1) {
+    ctx.fillStyle = `rgba(0,0,0,${0.45 * (1 - ratio)})`;
+    ctx.fillRect(b.x, b.y, b.w, b.h);
+    if (ratio < 0.7) {
+      ctx.strokeStyle = `rgba(0,0,0,${0.8 * (1 - ratio)})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(b.x + b.w * 0.25, b.y);
+      ctx.lineTo(b.x + b.w * 0.45, b.y + b.h * 0.55);
+      ctx.lineTo(b.x + b.w * 0.65, b.y + b.h);
+      ctx.stroke();
+      if (ratio < 0.4) {
+        ctx.beginPath();
+        ctx.moveTo(b.x + b.w * 0.7, b.y);
+        ctx.lineTo(b.x + b.w * 0.5, b.y + b.h * 0.4);
+        ctx.lineTo(b.x + b.w * 0.3, b.y + b.h);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // Burning glow
+  if (b.burning) {
+    const pulse = 0.3 + 0.2 * Math.sin(frameCount * 0.3);
+    ctx.fillStyle = `rgba(255,100,0,${pulse})`;
+    ctx.fillRect(b.x, b.y, b.w, b.h);
+  }
+
+  ctx.strokeStyle = dark;
+  ctx.lineWidth = 0.5;
+  ctx.strokeRect(b.x, b.y, b.w, b.h);
+}
+
+function drawEnemy(en) {
+  if (en.dead) return;
+  const x = Math.round(en.x), y = Math.round(en.y);
+  const flash = en.hitAnim > 0 && (en.hitAnim % 4 < 2);
+  const walkLeg = Math.sin(frameCount * 0.2) * (Math.abs(en.vx) > 0.5 ? 5 : 2);
+
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.beginPath(); ctx.ellipse(x, y + 1, 15, 5, 0, 0, Math.PI * 2); ctx.fill();
+
+  // Legs
+  ctx.fillStyle = flash ? '#FF6666' : '#5A6677';
+  ctx.fillRect(x - 9, y - 14, 7, 15 + walkLeg);
+  ctx.fillRect(x + 2, y - 14, 7, 15 - walkLeg);
+
+  // Feet
+  ctx.fillStyle = flash ? '#FF4444' : '#3A4455';
+  ctx.fillRect(x - 11, y - 1 + walkLeg, 10, 4);
+  ctx.fillRect(x + 1,  y - 1 - walkLeg, 10, 4);
+
+  // Torso (chainmail)
+  ctx.fillStyle = flash ? '#FF6666' : '#7A8899';
+  ctx.fillRect(x - 11, y - 38, 22, 25);
+  ctx.strokeStyle = flash ? '#FF4444' : '#5A6677';
+  ctx.lineWidth = 0.8;
+  for (let gy = y - 36; gy < y - 14; gy += 5)
+    { ctx.beginPath(); ctx.moveTo(x - 10, gy); ctx.lineTo(x + 10, gy); ctx.stroke(); }
+
+  // Sword arm
+  ctx.fillStyle = flash ? '#FF6666' : '#8A9AAB';
+  ctx.fillRect(x + 9, y - 36, 7, 20);
+  // Sword blade
+  ctx.fillStyle = '#DDD';
+  ctx.fillRect(x + 13, y - 50, 3, 22);
+  // Crossguard
+  ctx.fillStyle = '#888';
+  ctx.fillRect(x + 9, y - 32, 11, 3);
+
+  // Shield
+  ctx.fillStyle = flash ? '#CC2222' : '#8B1A1A';
+  ctx.fillRect(x - 20, y - 36, 11, 22);
+  ctx.fillStyle = flash ? '#FFCC00' : '#FFD700';
+  ctx.font = '8px serif';
+  ctx.fillText('✦', x - 18, y - 22);
+
+  // Helmet
+  ctx.fillStyle = flash ? '#FF4444' : '#5A6677';
+  ctx.beginPath();
+  ctx.arc(x, y - 44, 12, Math.PI, 0, false);
+  ctx.fillRect(x - 12, y - 44, 24, 10);
+  ctx.fill();
+  // Noseguard
+  ctx.fillStyle = flash ? '#FF3333' : '#445566';
+  ctx.fillRect(x - 2, y - 44, 4, 12);
+  // Eye slits
+  ctx.fillStyle = '#222';
+  ctx.fillRect(x - 8, y - 41, 5, 2.5);
+  ctx.fillRect(x + 3, y - 41, 5, 2.5);
+  // Plume
+  ctx.fillStyle = '#CC1111';
+  ctx.beginPath();
+  ctx.moveTo(x - 4, y - 56);
+  ctx.bezierCurveTo(x, y - 75, x + 8, y - 70, x + 4, y - 56);
+  ctx.fill();
+
+  // HP bar (for enemies with >1 hp)
+  if (en.maxHp > 1) {
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillRect(x - 16, y - 66, 32, 6);
+    const hpRatio = en.hp / en.maxHp;
+    ctx.fillStyle = hpRatio > 0.6 ? '#44DD44' : hpRatio > 0.3 ? '#FFCC00' : '#FF3322';
+    ctx.fillRect(x - 16, y - 66, 32 * hpRatio, 6);
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(x - 16, y - 66, 32, 6);
+  }
+}
+
+function drawCatapult() {
+  const cat = catapultPos();
+  const x = cat.x, y = cat.y;
+
+  // ── Wheels ──
+  function drawWheel(wx, wy) {
+    ctx.fillStyle = '#4A2E10';
+    ctx.beginPath(); ctx.arc(wx, wy, 16, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#2A1808';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(wx, wy, 16, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = '#6B3A18';
+    ctx.lineWidth = 2;
+    for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) {
+      ctx.beginPath();
+      ctx.moveTo(wx, wy);
+      ctx.lineTo(wx + Math.cos(a + frameCount*0.01) * 14, wy + Math.sin(a + frameCount*0.01) * 14);
+      ctx.stroke();
+    }
+    ctx.fillStyle = '#3A2010';
+    ctx.beginPath(); ctx.arc(wx, wy, 4, 0, Math.PI * 2); ctx.fill();
+  }
+  drawWheel(x - 28, y - 9);
+  drawWheel(x + 16, y - 9);
+
+  // Frame
+  ctx.fillStyle = '#7A4520';
+  ctx.fillRect(x - 34, y - 16, 64, 12);
+  ctx.fillStyle = '#5A3010';
+  ctx.fillRect(x - 34, y - 16, 64, 4);
+
+  // Arm support
+  ctx.strokeStyle = '#5A3010';
+  ctx.lineWidth = 7;
+  ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(x - 10, y - 16); ctx.lineTo(x - 10, y - 40); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x + 10, y - 16); ctx.lineTo(x + 10, y - 40); ctx.stroke();
+
+  // Arm (pointing towards mouse when aiming)
+  ctx.strokeStyle = '#4A2008';
+  ctx.lineWidth = 7;
+  ctx.lineCap = 'round';
+  let armEnd = { x: x - 18, y: y - 76 };
+  if (aimActive && !launched) {
+    const dx = mousePos.x - x, dy = mousePos.y - y;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    armEnd = { x: x + (dx / dist) * 65, y: y - 10 + (dy / dist) * 65 };
+  }
+  ctx.beginPath(); ctx.moveTo(x, y - 32); ctx.lineTo(armEnd.x, armEnd.y); ctx.stroke();
+
+  // Bucket / sling
+  ctx.fillStyle = '#4A2808';
+  ctx.beginPath(); ctx.arc(armEnd.x, armEnd.y, 10, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#2A1000';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(armEnd.x, armEnd.y, 10, 0, Math.PI * 2); ctx.stroke();
+
+  // Rope
+  ctx.strokeStyle = '#8B6914';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([3, 3]);
+  ctx.beginPath(); ctx.moveTo(x - 10, y - 40); ctx.lineTo(armEnd.x, armEnd.y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x + 10, y - 40); ctx.lineTo(armEnd.x, armEnd.y); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawAimTrajectory() {
+  if (!aimActive || launched) return;
+  const cat = catapultPos();
+  const rt = ROCK_TYPES[selectedRock];
+  const { dx, dy, dist, power } = getPowerAndDir();
+  const speed = power * 28 * rt.speedMult;
+  let px = cat.x, py = cat.y - 55;
+  let pvx = (dx / dist) * speed, pvy = (dy / dist) * speed;
+
+  // Draw slingshot pull line from catapult to cursor
+  ctx.strokeStyle = 'rgba(200,170,80,0.4)';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([5,5]);
+  ctx.beginPath();
+  ctx.moveTo(cat.x, cat.y - 55);
+  ctx.lineTo(mousePos.x, mousePos.y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  for (let i = 0; i < 70; i++) {
+    pvy += GRAVITY;
+    px += pvx; py += pvy;
+    if (py > GROUND()) break;
+    const alpha = 0.6 - i * 0.008;
+    if (alpha <= 0) break;
+    ctx.globalAlpha = alpha;
+    // Color based on rock type
+    const col = selectedRock === 'big' ? '#88AAFF'
+              : selectedRock === 'explosive' ? '#FF8844'
+              : selectedRock === 'fire' ? '#FF6600'
+              : selectedRock === 'small' ? '#DDDDDD'
+              : '#FFE860';
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.arc(px, py, i % 4 === 0 ? 3.5 : 1.8, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Power indicator circle around catapult
+  ctx.strokeStyle = `rgba(255,215,0,${0.15 + power * 0.25})`;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(cat.x, cat.y - 55, Math.min(dist, MAX_PULL), 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Power bar update
+  document.getElementById('powerFill').style.width = (power * 100) + '%';
+}
+
+function drawProjectile(p) {
+  // Trail
+  p.trail.forEach((t, i) => {
+    if (t.life <= 0) return;
+    ctx.globalAlpha = t.life * 0.35;
+    ctx.fillStyle = p.type === 'explosive' ? '#FF6600'
+                  : p.type === 'fire'      ? '#FF8800'
+                  : p.color;
+    const tr = p.r * (i / p.trail.length) * 0.7;
+    ctx.beginPath(); ctx.arc(t.x, t.y, tr, 0, Math.PI * 2); ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+
+  // Rock body
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  ctx.rotate(p.spin);
+
+  ctx.fillStyle = p.color;
+  ctx.beginPath(); ctx.arc(0, 0, p.r, 0, Math.PI * 2); ctx.fill();
+
+  // Highlight
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  ctx.beginPath(); ctx.arc(-p.r * 0.3, -p.r * 0.3, p.r * 0.4, 0, Math.PI * 2); ctx.fill();
+
+  // Specific details
+  if (p.type === 'explosive') {
+    ctx.strokeStyle = '#FF2200'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(0, 0, p.r, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = '#FFFF00';
+    ctx.beginPath(); ctx.arc(p.r * 0.2, -p.r * 0.2, p.r * 0.35, 0, Math.PI * 2); ctx.fill();
+  }
+  if (p.type === 'fire') {
+    ctx.fillStyle = '#FFCC00';
+    ctx.beginPath(); ctx.arc(0, 0, p.r * 0.5, 0, Math.PI * 2); ctx.fill();
+    // Flame tips
+    for (let a = 0; a < Math.PI * 2; a += Math.PI / 3) {
+      ctx.fillStyle = 'rgba(255,200,0,0.7)';
+      ctx.beginPath();
+      ctx.arc(Math.cos(a + frameCount * 0.2) * p.r * 0.8, Math.sin(a + frameCount * 0.2) * p.r * 0.8, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  if (p.type === 'big') {
+    ctx.strokeStyle = p.darkColor; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.arc(0, 0, p.r, 0, Math.PI * 2); ctx.stroke();
+  }
+  ctx.restore();
+
+  ctx.strokeStyle = 'rgba(0,0,0,0.35)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.stroke();
+}
+
+function drawParticle(p) {
+  ctx.globalAlpha = Math.max(0, p.life);
+  ctx.fillStyle = p.color;
+  ctx.beginPath(); ctx.arc(p.x, p.y, Math.max(0.5, p.r * p.life), 0, Math.PI * 2); ctx.fill();
+  ctx.globalAlpha = 1;
+}
+
+function drawHUD() {
+  const alive = enemies.filter(e => !e.dead).length;
+  const total = enemies.length;
+
+  ctx.font = 'bold 14px Georgia';
+  ctx.fillStyle = 'rgba(0,0,0,0.5)';
+  ctx.fillRect(W() / 2 - 70, 48, 140, 24);
+  ctx.fillStyle = alive > 0 ? '#FF8888' : '#88FF88';
+  ctx.textAlign = 'center';
+  ctx.fillText(`⚔️ Chevaliers : ${alive} / ${total}`, W() / 2, 65);
+  ctx.textAlign = 'left';
+
+  // Small red arrows above enemies that are hidden inside castle floors
+  enemies.forEach(en => {
+    if (en.dead) return;
+    if ((en.floorY || 0) > 30) {
+      // Draw a small indicator at their X at the top of the castle area
+      ctx.fillStyle = 'rgba(255,80,80,0.7)';
+      ctx.beginPath();
+      ctx.moveTo(en.x - 6, en.y - 75);
+      ctx.lineTo(en.x + 6, en.y - 75);
+      ctx.lineTo(en.x,     en.y - 65);
+      ctx.closePath();
+      ctx.fill();
+    }
+  });
+}
+
+// ─── Main Loop ──────────────────────────────────────────────────
+function gameLoop() {
+  requestAnimationFrame(gameLoop);
+  if (!gameActive) return;
+
+  frameCount++;
+  ctx.clearRect(0, 0, W(), H());
+  drawBackground();
+  blocks.forEach(drawBlock);
+  enemies.forEach(drawEnemy);
+  drawCatapult();
+  drawAimTrajectory();
+  projectiles.forEach(drawProjectile);
+  particles.forEach(drawParticle);
+  drawHUD();
+  updatePhysics();
+  if (launchCooldown > 0) {
+    launchCooldown--;
+    if (launchCooldown === 0 && projectiles.length === 0) launched = false;
+  }
+  checkWinLose();
+}
+
+gameLoop();
+</script>
+</body>
+</html>

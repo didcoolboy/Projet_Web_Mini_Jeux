@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Score;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PublicGameController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\AmiController;
@@ -49,6 +50,7 @@ Route::get('/jeux/tetris',  function () { return view('jeux.tetris');  })->name(
 Route::get('/jeux/pong',    function () { return view('jeux.pong');    })->name('jeux.pong');
 Route::get('/jeux/memory',  function () { return view('jeux.memory');  })->name('jeux.memory');
 Route::get('/jeux/flappy',  function () { return view('jeux.flappy');  })->name('jeux.flappy');
+Route::get('/jeux/{slug}', [PublicGameController::class, 'show'])->name('jeux.dynamic');
 
 // ── Pages protégées ────────────────────────────────────────────────────────
 

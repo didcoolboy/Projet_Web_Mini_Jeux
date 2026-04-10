@@ -1,8 +1,8 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Admin — PIXELZONE</title>
+    <title>Admin - PIXELZONE</title>
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
 
 </head>
@@ -19,7 +19,7 @@
             @endif
         </a>
         <span class="badge-admin">ADMIN</span>
-        <span>{{ auth()->user()->pseudo }}</span>   
+        <span>{{ auth()->user()->pseudo }}</span>
     </nav>
 
     {{-- Flash messages --}}
@@ -28,6 +28,9 @@
     @endif
     @if(session('error'))
         <div class="alert alert-error">{{ session('error') }}</div>
+    @endif
+    @if($errors->any())
+        <div class="alert alert-error">{{ $errors->first() }}</div>
     @endif
 
     @yield('content')

@@ -207,6 +207,26 @@
                 <div class="game-card__glow" style="--gc: rgba(255,221,0,0.15)"></div>
             </div>
 
+            @foreach(($uploadedGames ?? []) as $uploadedGame)
+            <div class="game-card" data-color="#00d4ff">
+                <div class="game-card__screen" style="background:linear-gradient(135deg,#00101a,#001825)">
+                    <span class="game-card__emoji">🎮</span>
+                    <div class="game-card__overlay">
+                        <a href="{{ route('jeux.dynamic', $uploadedGame->slug) }}" class="game-card__play">▶ JOUER</a>
+                    </div>
+                </div>
+                <div class="game-card__body">
+                    <div class="game-card__meta">
+                        <span class="game-card__tag" style="color:var(--neon-b);border-color:rgba(0,212,255,0.3)">NOUVEAU</span>
+                        <span class="game-card__players">👤 INVITÉ</span>
+                    </div>
+                    <h3 class="game-card__name">{{ $uploadedGame->name }}</h3>
+                    <p class="game-card__desc">{{ $uploadedGame->description ?: 'Nouveau jeu ajouté par l\'administration.' }}</p>
+                </div>
+                <div class="game-card__glow" style="--gc: rgba(0,212,255,0.15)"></div>
+            </div>
+            @endforeach
+
         </div>
     </section>
 
