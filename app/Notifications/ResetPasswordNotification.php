@@ -23,10 +23,7 @@ class ResetPasswordNotification extends Notification
 
     public function toMail($notifiable)
     {
-        $url = url(route('password.reset', [
-            'token' => $this->token,
-            'email' => $this->email,
-        ], false));
+        $url = url(route('password.reset', ['token' => $this->token], false) . '?email=' . urlencode($this->email));
 
         return (new MailMessage)
             ->subject('Réinitialiser ton mot de passe PIXELZONE')

@@ -114,9 +114,10 @@ class AuthController extends Controller
             : back()->withErrors(['email' => 'Impossible d\'envoyer le lien.']);
     }
 
-    public function showResetForm(string $token, ?string $email = null)
+    public function showResetForm(Request $request, string $token)
     {
-        return view('auth.reset_mot_de_passe', ['token' => $token, 'email' => $email]);
+        $email = $request->query('email');
+        return view('auth.reset_mot_de_passe', ['token' => $token, 'email' => $email ?? '']);
     }
 
     public function resetPassword(Request $request)
