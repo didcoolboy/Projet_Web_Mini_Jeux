@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\Score;
 use App\Models\Game;
 use App\Http\Controllers\AuthController;
@@ -22,9 +23,16 @@ Route::get('/', function () {
 
 Route::get('/accueil', function () {
     $topScores = Score::with(['user', 'game'])
-        ->whereRaw('scores.id = (SELECT s2.id FROM scores s2 WHERE s2.user_id = scores.user_id AND s2.game_id = scores.game_id ORDER BY s2.score DESC, s2.id DESC LIMIT 1)')
+        ->whereRaw('scores.id = (SELECT s2.id FROM scores s2 WHERE s2.game_id = scores.game_id ORDER BY s2.score DESC, s2.id DESC LIMIT 1)')
         ->orderByDesc('scores.score')
-        ->take(10)
+        ->get();
+
+    $totalScores = DB::table('users')
+        ->leftJoin('scores', 'users.id', '=', 'scores.user_id')
+        ->select('users.id', 'users.pseudo', DB::raw('COALESCE(SUM(scores.score), 0) as total_score'))
+        ->groupBy('users.id', 'users.pseudo')
+        ->orderByDesc('total_score')
+        ->limit(5)
         ->get();
 
     $uploadedGames = Game::query()
@@ -32,7 +40,7 @@ Route::get('/accueil', function () {
         ->latest()
         ->get();
 
-    return view('accueil', compact('topScores', 'uploadedGames'));
+    return view('accueil', compact('topScores', 'totalScores', 'uploadedGames'));
 })->name('accueil');
 
 Route::get('/connexion', [AuthController::class, 'showConnexion'])->name('connexion');

@@ -307,6 +307,29 @@
                     </span>
                 </div>
             </div>
+
+            <div class="lb-table" style="margin-top:18px;">
+                <div class="lb-table__head">
+                    <span>RANG</span>
+                    <span>JOUEUR</span>
+                    <span>TYPE</span>
+                    <span>POINTS</span>
+                </div>
+                @if(isset($totalScores) && count($totalScores) > 0)
+                    @foreach($totalScores as $index => $row)
+                    <div class="lb-row">
+                        <span class="lb-row__rank">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                        <span class="lb-row__player"><span class="lb-row__avatar">🏆</span> {{ $row->pseudo }}</span>
+                        <span class="lb-row__game">TOTAL</span>
+                        <span class="lb-row__score" style="color:var(--neon-b)">{{ number_format($row->total_score) }}</span>
+                    </div>
+                    @endforeach
+                @else
+                    <div class="lb-row" style="justify-content:center;color:var(--muted);">
+                        Aucun total de points pour l'instant.
+                    </div>
+                @endif
+            </div>
         </div>
     </section>
 

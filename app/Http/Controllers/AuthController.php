@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
 use App\Models\User;
 use App\Models\Score;
@@ -93,9 +94,16 @@ class AuthController extends Controller
     public function showInvite()
     {
         $topScores = \App\Models\Score::with(['user', 'game'])
-            ->whereRaw('scores.id = (SELECT s2.id FROM scores s2 WHERE s2.user_id = scores.user_id AND s2.game_id = scores.game_id ORDER BY s2.score DESC, s2.id DESC LIMIT 1)')
+            ->whereRaw('scores.id = (SELECT s2.id FROM scores s2 WHERE s2.game_id = scores.game_id ORDER BY s2.score DESC, s2.id DESC LIMIT 1)')
             ->orderByDesc('scores.score')
-            ->take(10)
+            ->get();
+
+        $totalScores = DB::table('users')
+            ->leftJoin('scores', 'users.id', '=', 'scores.user_id')
+            ->select('users.id', 'users.pseudo', DB::raw('COALESCE(SUM(scores.score), 0) as total_score'))
+            ->groupBy('users.id', 'users.pseudo')
+            ->orderByDesc('total_score')
+            ->limit(5)
             ->get();
 
         $uploadedGames = Game::query()
@@ -103,7 +111,7 @@ class AuthController extends Controller
             ->latest()
             ->get();
 
-        return view('auth.invite', compact('topScores', 'uploadedGames'));
+        return view('auth.invite', compact('topScores', 'totalScores', 'uploadedGames'));
     }
 
     public function showForgotPassword()
