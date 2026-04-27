@@ -22,6 +22,8 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::get('/accueil', function () {
+    $coreGameSlugs = ['snake', 'morpion', 'tetris', 'pong', 'memory', 'flappy'];
+
     $topScores = Score::with(['user', 'game'])
         ->whereRaw('scores.id = (SELECT s2.id FROM scores s2 WHERE s2.game_id = scores.game_id ORDER BY s2.score DESC, s2.id DESC LIMIT 1)')
         ->orderByDesc('scores.score')
@@ -36,11 +38,16 @@ Route::get('/accueil', function () {
         ->get();
 
     $uploadedGames = Game::query()
-        ->whereNotIn('slug', ['snake', 'morpion', 'tetris', 'pong', 'memory', 'flappy'])
+        ->whereNotIn('slug', $coreGameSlugs)
         ->latest()
         ->get();
 
-    return view('accueil', compact('topScores', 'totalScores', 'uploadedGames'));
+    $availableGameSlugs = Game::query()
+        ->whereIn('slug', $coreGameSlugs)
+        ->pluck('slug')
+        ->all();
+
+    return view('accueil', compact('topScores', 'totalScores', 'uploadedGames', 'availableGameSlugs'));
 })->name('accueil');
 
 Route::get('/connexion', [AuthController::class, 'showConnexion'])->name('connexion');
@@ -61,12 +68,35 @@ Route::post('/deconnexion', [AuthController::class, 'deconnexion'])->name('decon
 
 // ── Jeux publics (existants — ne pas toucher) ──────────────────────────────
 
-Route::get('/jeux/snake',   function () { return view('jeux.snake');   })->name('jeux.snake');
-Route::get('/jeux/morpion', function () { return view('jeux.morpion'); })->name('jeux.morpion');
-Route::get('/jeux/tetris',  function () { return view('jeux.tetris');  })->name('jeux.tetris');
-Route::get('/jeux/pong',    function () { return view('jeux.pong');    })->name('jeux.pong');
-Route::get('/jeux/memory',  function () { return view('jeux.memory');  })->name('jeux.memory');
-Route::get('/jeux/flappy',  function () { return view('jeux.flappy');  })->name('jeux.flappy');
+Route::get('/jeux/snake', function () {
+    abort_unless(Game::query()->where('slug', 'snake')->exists(), 404);
+    return view('jeux.snake');
+})->name('jeux.snake');
+
+Route::get('/jeux/morpion', function () {
+    abort_unless(Game::query()->where('slug', 'morpion')->exists(), 404);
+    return view('jeux.morpion');
+})->name('jeux.morpion');
+
+Route::get('/jeux/tetris', function () {
+    abort_unless(Game::query()->where('slug', 'tetris')->exists(), 404);
+    return view('jeux.tetris');
+})->name('jeux.tetris');
+
+Route::get('/jeux/pong', function () {
+    abort_unless(Game::query()->where('slug', 'pong')->exists(), 404);
+    return view('jeux.pong');
+})->name('jeux.pong');
+
+Route::get('/jeux/memory', function () {
+    abort_unless(Game::query()->where('slug', 'memory')->exists(), 404);
+    return view('jeux.memory');
+})->name('jeux.memory');
+
+Route::get('/jeux/flappy', function () {
+    abort_unless(Game::query()->where('slug', 'flappy')->exists(), 404);
+    return view('jeux.flappy');
+})->name('jeux.flappy');
 Route::get('/jeux/{slug}', [PublicGameController::class, 'show'])->name('jeux.dynamic');
 
 // ── Pages protégées ────────────────────────────────────────────────────────

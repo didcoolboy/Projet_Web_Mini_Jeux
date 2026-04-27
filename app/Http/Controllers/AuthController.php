@@ -93,6 +93,8 @@ class AuthController extends Controller
 
     public function showInvite()
     {
+        $coreGameSlugs = ['snake', 'morpion', 'tetris', 'pong', 'memory', 'flappy'];
+
         $topScores = \App\Models\Score::with(['user', 'game'])
             ->whereRaw('scores.id = (SELECT s2.id FROM scores s2 WHERE s2.game_id = scores.game_id ORDER BY s2.score DESC, s2.id DESC LIMIT 1)')
             ->orderByDesc('scores.score')
@@ -107,11 +109,16 @@ class AuthController extends Controller
             ->get();
 
         $uploadedGames = Game::query()
-            ->whereNotIn('slug', ['snake', 'morpion', 'tetris', 'pong', 'memory', 'flappy'])
+            ->whereNotIn('slug', $coreGameSlugs)
             ->latest()
             ->get();
 
-        return view('auth.invite', compact('topScores', 'totalScores', 'uploadedGames'));
+        $availableGameSlugs = Game::query()
+            ->whereIn('slug', $coreGameSlugs)
+            ->pluck('slug')
+            ->all();
+
+        return view('auth.invite', compact('topScores', 'totalScores', 'uploadedGames', 'availableGameSlugs'));
     }
 
     public function showForgotPassword()

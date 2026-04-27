@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Game;
+use App\Models\LastPlayed;
+use App\Models\Score;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -94,6 +96,10 @@ class AdminGameController extends Controller
         if (File::isDirectory($uploadedGameDir)) {
             File::deleteDirectory($uploadedGameDir);
         }
+
+        // Sécurité supplémentaire: nettoyage explicite des données liées.
+        Score::query()->where('game_id', $game->id)->delete();
+        LastPlayed::query()->where('game_id', $game->id)->delete();
 
         $game->delete();
         return back()->with('success', 'Jeu retire.');

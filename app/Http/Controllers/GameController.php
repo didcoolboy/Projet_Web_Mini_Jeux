@@ -27,10 +27,14 @@ class GameController extends Controller
         ]);
 
         try {
-            $game = Game::firstOrCreate(
-                ['slug' => $gameSlug],
-                ['name' => ucfirst($gameSlug)]
-            );
+            $game = Game::query()->where('slug', $gameSlug)->first();
+            if (! $game) {
+                return response()->json([
+                    'success' => false,
+                    'error' => 'Jeu indisponible',
+                    'message' => 'Ce jeu a ete retire et ne peut plus enregistrer de score.',
+                ], 404);
+            }
 
             $incomingScore = (int) $validated['score'];
 

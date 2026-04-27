@@ -99,6 +99,7 @@
 
         <div class="games-grid games-grid--4col">
 
+            @if(in_array('snake', $availableGameSlugs ?? []))
             <div class="game-card" data-color="#00ff88">
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#001a0a,#002a10)">
                     <span class="game-card__emoji">🐍</span>
@@ -116,7 +117,9 @@
                 </div>
                 <div class="game-card__glow" style="--gc: rgba(0,255,136,0.15)"></div>
             </div>
+            @endif
 
+            @if(in_array('memory', $availableGameSlugs ?? []))
             <div class="game-card" data-color="#00d4ff">
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#00101a,#001825)">
                     <span class="game-card__emoji">🧠</span>
@@ -134,7 +137,9 @@
                 </div>
                 <div class="game-card__glow" style="--gc: rgba(0,212,255,0.15)"></div>
             </div>
+            @endif
 
+            @if(in_array('morpion', $availableGameSlugs ?? []))
             <div class="game-card" data-color="#ffdd00">
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#1a1400,#0d0b00)">
                     <span class="game-card__emoji">❌</span>
@@ -152,7 +157,9 @@
                 </div>
                 <div class="game-card__glow" style="--gc: rgba(255,221,0,0.15)"></div>
             </div>
+            @endif
 
+            @if(in_array('tetris', $availableGameSlugs ?? []))
             <div class="game-card" data-color="#bf00ff">
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#0d0015,#1a002a)">
                     <span class="game-card__emoji">🟦</span>
@@ -170,7 +177,9 @@
                 </div>
                 <div class="game-card__glow" style="--gc: rgba(191,0,255,0.15)"></div>
             </div>
+            @endif
 
+            @if(in_array('pong', $availableGameSlugs ?? []))
             <div class="game-card" data-color="#00ff88">
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#001a0a,#002a10)">
                     <span class="game-card__emoji">🏓</span>
@@ -188,7 +197,9 @@
                 </div>
                 <div class="game-card__glow" style="--gc: rgba(0,255,136,0.15)"></div>
             </div>
+            @endif
 
+            @if(in_array('flappy', $availableGameSlugs ?? []))
             <div class="game-card" data-color="#ffdd00">
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#1a1400,#0d0b00)">
                     <span class="game-card__emoji">🐦</span>
@@ -206,6 +217,7 @@
                 </div>
                 <div class="game-card__glow" style="--gc: rgba(255,221,0,0.15)"></div>
             </div>
+            @endif
 
             @foreach(($uploadedGames ?? []) as $uploadedGame)
             <div class="game-card" data-color="#00d4ff">
@@ -335,9 +347,15 @@
                 <h4 class="footer-col__title">JEUX</h4>
                 <ul class="footer-col__list">
                     <li><a href="#jeux">Tous les jeux</a></li>
+                    @if(in_array('snake', $availableGameSlugs ?? []))
                     <li><a href="{{ route('jeux.snake', ['from' => 'invite']) }}">Snake</a></li>
+                    @endif
+                    @if(in_array('tetris', $availableGameSlugs ?? []))
                     <li><a href="{{ route('jeux.tetris', ['from' => 'invite']) }}">Tetris</a></li>
+                    @endif
+                    @if(in_array('morpion', $availableGameSlugs ?? []))
                     <li><a href="{{ route('jeux.morpion', ['from' => 'invite']) }}">Morpion</a></li>
+                    @endif
                 </ul>
             </div>
             <div class="footer-col">
