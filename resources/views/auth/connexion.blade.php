@@ -50,11 +50,6 @@
                 </div>
 
                 <div class="field-options">
-                    <label class="checkbox-wrap">
-                        <input type="checkbox" name="remember" id="remember">
-                        <span class="checkbox-custom"></span>
-                        <span class="checkbox-label">Se souvenir de moi</span>
-                    </label>
                     <a href="{{ route('mot_de_passe_oublie') }}" class="link-forgot">Mot de passe oublié ?</a>
                 </div>
 

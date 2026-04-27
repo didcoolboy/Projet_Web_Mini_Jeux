@@ -21,12 +21,12 @@
                 <td style="color:#4a6a4a">{{ $user->created_at ? $user->created_at->format('d/m/Y') : '—' }}</td>
                 <td>
                     <div class="actions">
-                        @if($user->role === 'user')
+                        @if($user->role === 'joueur')
                             <form method="POST" action="{{ route('admin.users.promote', $user) }}">
                                 @csrf @method('PATCH')
                                 <button class="btn btn-warn">PROMOUVOIR</button>
                             </form>
-                        @elseif($user->id !== auth()->id())
+                        @elseif($user->role === 'admin' && $user->id !== auth()->id())
                             <form method="POST" action="{{ route('admin.users.demote', $user) }}">
                                 @csrf @method('PATCH')
                                 <button class="btn btn-ghost">RÉTROGRADER</button>

@@ -29,8 +29,11 @@ class AdminUserController extends Controller
 
     public function promote(User $user)
     {
+        if ($user->role === 'admin') {
+            return back()->with('error', 'Cet utilisateur est déjà admin.');
+        }
         $user->update(['role' => 'admin']);
-        return back()->with('success', "{$user->name} est maintenant admin.");
+        return back()->with('success', "{$user->pseudo} est maintenant admin.");
     }
 
     public function demote(User $user)
@@ -38,8 +41,11 @@ class AdminUserController extends Controller
         if ($user->id === auth()->id()) {
             return back()->with('error', 'Vous ne pouvez pas vous rétrograder vous-même.');
         }
-        $user->update(['role' => 'user']);
-        return back()->with('success', "{$user->name} rétrogradé.");
+        if ($user->role !== 'admin') {
+            return back()->with('error', 'Seuls les admins peuvent être rétrogradés.');
+        }
+        $user->update(['role' => 'joueur']);
+        return back()->with('success', "{$user->pseudo} rétrogradé en joueur.");
     }
 
     public function destroy(User $user)

@@ -105,4 +105,11 @@ class User extends Authenticatable
             })
             ->exists();
     }
+
+    // ─── Password Reset ────────────────────────────────────────
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\ResetPasswordNotification($token, $this->email));
+    }
 }

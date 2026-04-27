@@ -1,5 +1,5 @@
 const cv = document.getElementById('c'), ctx = cv.getContext('2d');
-const W = 680, H = 360;
+const W = 960, H = 508;
 cv.width = W; cv.height = H;
 
 // ── PROJECTION ─────────────────────────────────────────

@@ -42,9 +42,11 @@ Route::post('/inscription', [AuthController::class, 'inscription'])->name('inscr
 
 Route::get('/invite', [AuthController::class, 'showInvite'])->name('accueil.invite');
 
-Route::get('/mot-de-passe-oublie', function () {
-    return view('auth.mot_de_passe_oublie');
-})->name('mot_de_passe_oublie');
+Route::get('/mot-de-passe-oublie', [AuthController::class, 'showForgotPassword'])->name('mot_de_passe_oublie');
+Route::post('/mot-de-passe-oublie', [AuthController::class, 'sendResetLink'])->name('password.email');
+
+Route::get('/reset-mot-de-passe/{token}', [AuthController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-mot-de-passe', [AuthController::class, 'resetPassword'])->name('password.update');
 
 Route::post('/deconnexion', [AuthController::class, 'deconnexion'])->name('deconnexion');
 

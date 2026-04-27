@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Pressure</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="game">
+  <div id="hud">
+    <div class="stat"><div class="stat-label">Score</div><div class="stat-val" id="score-val">0</div></div>
+    <div class="stat"><div class="stat-label">Altitude</div><div class="stat-val" id="alt-val">0m</div></div>
+    <div class="stat"><div class="stat-label">MIN</div><div class="stat-val" id="min-val" style="color:#378ADD">--</div></div>
+    <div class="stat"><div class="stat-label">MAX</div><div class="stat-val" id="max-val" style="color:#E24B4A">--</div></div>
+    <div class="stat"><div class="stat-label">Temps</div><div class="stat-val" id="time-val">0s</div></div>
+  </div>
+
+  <div id="speed-wrap">
+    <div id="speed-label">Boost gonflement</div>
+    <div id="speed-bg"><div id="speed-fill"></div></div>
+  </div>
+
+  <div id="gauge-wrap">
+    <canvas id="bg-canvas"></canvas>
+    <canvas id="ov-canvas"></canvas>
+  </div>
+
+  <div id="buttons-area">
+    <div class="btn-row">
+      <div class="game-btn">
+        <button class="btn-body" id="btn-inflate">Gonfler<span class="btn-key">[ ↑ ]</span></button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <div class="game-btn">
+        <div class="bar-wrap"><div class="bar-fill" id="oh-max" style="background:#E24B4A;"></div></div>
+        <button class="btn-body" id="btn-max">Monter MAX<span class="btn-key">[ ← ]</span></button>
+      </div>
+
+      <div class="game-btn">
+        <div class="bar-wrap"><div class="bar-fill" id="oh-min" style="background:#378ADD;"></div></div>
+        <button class="btn-body" id="btn-min">Monter MIN<span class="btn-key">[ → ]</span></button>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <div class="game-btn">
+        <div class="bar-wrap"><div class="bar-fill" id="repair-bar" style="background:#1D9E75;"></div></div>
+        <button class="btn-body" id="btn-repair">Réparer<span class="btn-key">[ ↓ ]</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="overlay">
+  <div id="overlay-box">
+    <h2 id="ot">PRESSURE</h2>
+    <p id="om">Maintiens Gonfler pour monter.
+Monte MAX pour débloquer l'altitude.
+Monte MIN pour accélérer le gonflement.
+Sors des bornes → game over !
+
+↑ Gonfler · ↓ Réparer
+← Monter MAX · → Monter MIN</p>
+    <button id="overlay-btn">Jouer</button>
+  </div>
+</div>
+
+<script src="jeux.js"></script>
+</body>
+</html>

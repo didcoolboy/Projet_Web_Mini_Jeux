@@ -20,7 +20,9 @@
         <a href="{{ route('welcome') }}" class="nav-logo">PIXELZONE</a>
 
         <ul class="nav-links">
+            @guest
             <li><a href="#comment" class="nav-link">Comment ça marche</a></li>
+            @endguest
             <li><a href="#jeux" class="nav-link">Jeux</a></li>
             <li><a href="#classement" class="nav-link">Classement</a></li>
         </ul>
@@ -76,6 +78,7 @@
     </section>
 
     <!-- COMMENT ÇA MARCHE -->
+    @guest
     <section class="section" id="comment">
         <div class="section-head">
             <div>
@@ -114,6 +117,7 @@
             </div>
         </div>
     </section>
+    @endguest
 
     <!-- JEUX -->
     <section class="section" id="jeux">
