@@ -7,7 +7,12 @@
 @endpush
 
 @section('content')
-<a href="javascript:history.back()" class="back-link">‹ RETOUR</a>
+@php
+  $backUrl = request('from') === 'invite' || !auth()->check()
+      ? route('accueil.invite')
+      : route('accueil');
+@endphp
+<a href="{{ $backUrl }}" class="back-link">‹ RETOUR</a>
 
 <div class="game-page">
 

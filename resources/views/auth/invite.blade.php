@@ -103,7 +103,7 @@
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#001a0a,#002a10)">
                     <span class="game-card__emoji">🐍</span>
                     <div class="game-card__overlay">
-                        <a href="{{ route('jeux.snake') }}" class="game-card__play">▶ JOUER</a>
+                        <a href="{{ route('jeux.snake', ['from' => 'invite']) }}" class="game-card__play">▶ JOUER</a>
                     </div>
                 </div>
                 <div class="game-card__body">
@@ -121,7 +121,7 @@
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#00101a,#001825)">
                     <span class="game-card__emoji">🧠</span>
                     <div class="game-card__overlay">
-                        <a href="{{ route('jeux.memory') }}" class="game-card__play">▶ JOUER</a>
+                        <a href="{{ route('jeux.memory', ['from' => 'invite']) }}" class="game-card__play">▶ JOUER</a>
                     </div>
                 </div>
                 <div class="game-card__body">
@@ -139,7 +139,7 @@
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#1a1400,#0d0b00)">
                     <span class="game-card__emoji">❌</span>
                     <div class="game-card__overlay">
-                        <a href="{{ route('jeux.morpion') }}" class="game-card__play">▶ JOUER</a>
+                        <a href="{{ route('jeux.morpion', ['from' => 'invite']) }}" class="game-card__play">▶ JOUER</a>
                     </div>
                 </div>
                 <div class="game-card__body">
@@ -157,7 +157,7 @@
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#0d0015,#1a002a)">
                     <span class="game-card__emoji">🟦</span>
                     <div class="game-card__overlay">
-                        <a href="{{ route('jeux.tetris') }}" class="game-card__play">▶ JOUER</a>
+                        <a href="{{ route('jeux.tetris', ['from' => 'invite']) }}" class="game-card__play">▶ JOUER</a>
                     </div>
                 </div>
                 <div class="game-card__body">
@@ -175,7 +175,7 @@
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#001a0a,#002a10)">
                     <span class="game-card__emoji">🏓</span>
                     <div class="game-card__overlay">
-                        <a href="{{ route('jeux.pong') }}" class="game-card__play">▶ JOUER</a>
+                        <a href="{{ route('jeux.pong', ['from' => 'invite']) }}" class="game-card__play">▶ JOUER</a>
                     </div>
                 </div>
                 <div class="game-card__body">
@@ -193,7 +193,7 @@
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#1a1400,#0d0b00)">
                     <span class="game-card__emoji">🐦</span>
                     <div class="game-card__overlay">
-                        <a href="{{ route('jeux.flappy') }}" class="game-card__play">▶ JOUER</a>
+                        <a href="{{ route('jeux.flappy', ['from' => 'invite']) }}" class="game-card__play">▶ JOUER</a>
                     </div>
                 </div>
                 <div class="game-card__body">
@@ -212,7 +212,7 @@
                 <div class="game-card__screen" style="background:linear-gradient(135deg,#00101a,#001825)">
                     <span class="game-card__emoji">🎮</span>
                     <div class="game-card__overlay">
-                        <a href="{{ route('jeux.dynamic', $uploadedGame->slug) }}" class="game-card__play">▶ JOUER</a>
+                        <a href="{{ route('jeux.dynamic', ['slug' => $uploadedGame->slug, 'from' => 'invite']) }}" class="game-card__play">▶ JOUER</a>
                     </div>
                 </div>
                 <div class="game-card__body">
@@ -312,9 +312,9 @@
                 <h4 class="footer-col__title">JEUX</h4>
                 <ul class="footer-col__list">
                     <li><a href="#jeux">Tous les jeux</a></li>
-                    <li><a href="{{ route('jeux.snake') }}">Snake</a></li>
-                    <li><a href="{{ route('jeux.tetris') }}">Tetris</a></li>
-                    <li><a href="{{ route('jeux.morpion') }}">Morpion</a></li>
+                    <li><a href="{{ route('jeux.snake', ['from' => 'invite']) }}">Snake</a></li>
+                    <li><a href="{{ route('jeux.tetris', ['from' => 'invite']) }}">Tetris</a></li>
+                    <li><a href="{{ route('jeux.morpion', ['from' => 'invite']) }}">Morpion</a></li>
                 </ul>
             </div>
             <div class="footer-col">

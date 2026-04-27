@@ -18,7 +18,9 @@ class PublicGameController extends Controller
 
         $relativePath = str_replace([public_path() . DIRECTORY_SEPARATOR, '\\'], ['', '/'], $entrypointPath);
         $gameUrl = asset($relativePath);
-        $backUrl = auth()->check() ? route('accueil') : route('accueil.invite');
+        $backUrl = $request->query('from') === 'invite' || ! auth()->check()
+            ? route('accueil.invite')
+            : route('accueil');
 
         return view('jeux.uploaded', compact('game', 'gameUrl', 'backUrl'));
     }
