@@ -10,6 +10,8 @@ class LastPlayed extends Model
 {
     use HasFactory;
 
+    protected $table = 'last_played';
+
     protected $fillable = [
         'user_id',
         'game_id',
