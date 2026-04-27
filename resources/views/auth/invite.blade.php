@@ -245,7 +245,7 @@
                 <div class="podium-card podium-card--2">
                     <div class="podium-avatar">🥈</div>
                     <div class="podium-name">{{ $topScores[1]->user->pseudo }}</div>
-                    <div class="podium-game">{{ $topScores[1]->jeu }}</div>
+                    <div class="podium-game">{{ $topScores[1]->game->name ?? $topScores[1]->jeu ?? '-' }}</div>
                     <div class="podium-score" style="color:#c0c0c0">{{ number_format($topScores[1]->score) }} pts</div>
                     <div class="podium-rank" style="background:#c0c0c0;color:#000">2</div>
                 </div>
@@ -253,14 +253,14 @@
                     <div class="podium-crown">👑</div>
                     <div class="podium-avatar">🥇</div>
                     <div class="podium-name">{{ $topScores[0]->user->pseudo }}</div>
-                    <div class="podium-game">{{ $topScores[0]->jeu }}</div>
+                    <div class="podium-game">{{ $topScores[0]->game->name ?? $topScores[0]->jeu ?? '-' }}</div>
                     <div class="podium-score" style="color:var(--neon-y)">{{ number_format($topScores[0]->score) }} pts</div>
                     <div class="podium-rank" style="background:var(--neon-y);color:#000">1</div>
                 </div>
                 <div class="podium-card podium-card--3">
                     <div class="podium-avatar">🥉</div>
                     <div class="podium-name">{{ $topScores[2]->user->pseudo }}</div>
-                    <div class="podium-game">{{ $topScores[2]->jeu }}</div>
+                    <div class="podium-game">{{ $topScores[2]->game->name ?? $topScores[2]->jeu ?? '-' }}</div>
                     <div class="podium-score" style="color:#cd7f32">{{ number_format($topScores[2]->score) }} pts</div>
                     <div class="podium-rank" style="background:#cd7f32;color:#000">3</div>
                 </div>
@@ -274,12 +274,12 @@
                     <span>JEU</span>
                     <span>SCORE</span>
                 </div>
-                @if(isset($topScores) && count($topScores) > 3)
-                    @foreach($topScores->skip(3) as $index => $s)
+                @if(isset($topScores) && count($topScores) > 0)
+                    @foreach($topScores as $index => $s)
                     <div class="lb-row">
-                        <span class="lb-row__rank">{{ str_pad($index + 4, 2, '0', STR_PAD_LEFT) }}</span>
+                        <span class="lb-row__rank">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
                         <span class="lb-row__player"><span class="lb-row__avatar">🎮</span> {{ $s->user->pseudo }}</span>
-                        <span class="lb-row__game">{{ $s->jeu }}</span>
+                        <span class="lb-row__game">{{ $s->game->name ?? $s->jeu ?? '-' }}</span>
                         <span class="lb-row__score" style="color:var(--neon-g)">{{ number_format($s->score) }}</span>
                     </div>
                     @endforeach

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\QueryException;
 use App\Models\User;
 use App\Models\Score;
 use App\Models\Game;
@@ -45,22 +46,30 @@ class AuthController extends Controller
 
     public function inscription(Request $request)
     {
-        $request->validate([
-            'nom'      => 'required|string|max:50',
-            'prenom'   => 'required|string|max:50',
-            'pseudo'   => 'required|string|max:50|unique:users',
-            'email'    => 'required|email|unique:users',
-            'password' => 'required|min:6',
-        ]);
+        try {
+            $request->validate([
+                'nom'      => 'required|string|max:50',
+                'prenom'   => 'required|string|max:50',
+                'pseudo'   => 'required|string|max:50|unique:users',
+                'email'    => 'required|email|unique:users',
+                'password' => 'required|min:6',
+            ]);
 
-        $user = User::create([
-            'nom'      => $request->nom,
-            'prenom'   => $request->prenom,
-            'pseudo'   => $request->pseudo,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role'     => 'joueur',
-        ]);
+            $user = User::create([
+                'nom'      => $request->nom,
+                'prenom'   => $request->prenom,
+                'pseudo'   => $request->pseudo,
+                'email'    => $request->email,
+                'password' => Hash::make($request->password),
+                'role'     => 'joueur',
+            ]);
+        } catch (QueryException $e) {
+            report($e);
+
+            return back()
+                ->withInput($request->except('password'))
+                ->withErrors(['email' => 'Service temporairement indisponible. Verifie que MySQL est bien lance, puis reessaie.']);
+        }
 
         Auth::login($user);
 
@@ -83,8 +92,9 @@ class AuthController extends Controller
 
     public function showInvite()
     {
-        $topScores = \App\Models\Score::with('user')
-            ->orderByDesc('score')
+        $topScores = \App\Models\Score::with(['user', 'game'])
+            ->whereRaw('scores.id = (SELECT s2.id FROM scores s2 WHERE s2.user_id = scores.user_id AND s2.game_id = scores.game_id ORDER BY s2.score DESC, s2.id DESC LIMIT 1)')
+            ->orderByDesc('scores.score')
             ->take(10)
             ->get();
 

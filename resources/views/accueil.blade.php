@@ -279,12 +279,12 @@
                     <span>JEU</span>
                     <span>SCORE</span>
                 </div>
-                @if(isset($topScores) && count($topScores) > 3)
-                    @foreach($topScores->skip(3) as $index => $s)
+                @if(isset($topScores) && count($topScores) > 0)
+                    @foreach($topScores as $index => $s)
                     <div class="lb-row">
-                        <span class="lb-row__rank">{{ str_pad($index + 4, 2, '0', STR_PAD_LEFT) }}</span>
+                        <span class="lb-row__rank">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
                         <span class="lb-row__player"><span class="lb-row__avatar">🎮</span> {{ $s->user->pseudo }}</span>
-                        <span class="lb-row__game">{{ $s->jeu }}</span>
+                        <span class="lb-row__game">{{ $s->game->name ?? $s->jeu ?? '-' }}</span>
                         <span class="lb-row__score" style="color:var(--neon-g)">{{ number_format($s->score) }}</span>
                     </div>
                     @endforeach

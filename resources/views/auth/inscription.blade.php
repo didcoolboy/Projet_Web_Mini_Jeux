@@ -85,7 +85,7 @@
                 </div>
 
                 <button type="submit" class="btn-auth">
-                    <span class="btn-auth__text">▶ CRÉER MON COMPTE</span>
+                    <span class="btn-auth__text">▶ CREER MON COMPTE</span>
                 </button>
 
             </form>

@@ -21,8 +21,9 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::get('/accueil', function () {
-    $topScores = Score::with('user')
-        ->orderByDesc('score')
+    $topScores = Score::with(['user', 'game'])
+        ->whereRaw('scores.id = (SELECT s2.id FROM scores s2 WHERE s2.user_id = scores.user_id AND s2.game_id = scores.game_id ORDER BY s2.score DESC, s2.id DESC LIMIT 1)')
+        ->orderByDesc('scores.score')
         ->take(10)
         ->get();
 
