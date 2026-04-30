@@ -107,12 +107,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/classement', [LeaderboardController::class, 'index'])->name('leaderboard.index');
 
     // Profil
+    // placer la route de recherche avant la route paramétrée pour éviter qu'elle soit capturée
+    // par `/profil/{user}` (ordre des routes important)
+    Route::get('/profil/search',            [ProfilController::class, 'search'])    ->name('profil.search');
     Route::get('/profil/{user}',            [ProfilController::class, 'show'])      ->name('profil');
     Route::get('/profil/{user}/historique', [ProfilController::class, 'historique'])->name('profil.historique');
     Route::get('/profil/edit',              [ProfilController::class, 'edit'])      ->name('profil.edit');
     Route::patch('/profil/settings',        [ProfilController::class, 'settings']) ->name('profil.settings');
     Route::delete('/profil',                [ProfilController::class, 'destroy'])  ->name('profil.destroy');
-    Route::get('/profil/search',            [ProfilController::class, 'search'])    ->name('profil.search');
 
     // Amis
     Route::get   ('/amis',                  [AmiController::class, 'index'])   ->name('amis.index');
