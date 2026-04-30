@@ -112,6 +112,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profil/edit',              [ProfilController::class, 'edit'])      ->name('profil.edit');
     Route::patch('/profil/settings',        [ProfilController::class, 'settings']) ->name('profil.settings');
     Route::delete('/profil',                [ProfilController::class, 'destroy'])  ->name('profil.destroy');
+    Route::get('/profil/search',            [ProfilController::class, 'search'])    ->name('profil.search');
 
     // Amis
     Route::get   ('/amis',                  [AmiController::class, 'index'])   ->name('amis.index');

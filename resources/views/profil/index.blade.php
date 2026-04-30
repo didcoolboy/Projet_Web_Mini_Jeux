@@ -160,6 +160,20 @@
     @endforelse
   </div>
 
+
+  <div class="section-head" style="margin-top:22px;">
+    <div class="section-title">Rechercher un joueur</div>
+    <div class="section-link" style="font-size:.85rem;color:var(--muted)">Tapez un pseudo puis appuyez sur Entrée</div>
+  </div>
+
+  <div class="search-player">
+    <form id="playerSearchForm" onsubmit="return false;">
+      <input id="playerSearchInput" type="search" name="q" placeholder="Rechercher un pseudo..." autocomplete="off" style="width:100%;padding:10px;border-radius:6px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit;">
+    </form>
+
+    <div id="searchResults" style="margin-top:12px;"></div>
+  </div>
+
 @endsection
 
 @push('scripts')

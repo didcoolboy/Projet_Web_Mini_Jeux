@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Score;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 class ProfilController extends Controller
 {
@@ -86,6 +87,22 @@ class ProfilController extends Controller
             ->paginate(20);
 
         return view('profil.historique', compact('user', 'parties'));
+    }
+
+    public function search(Request $request)
+    {
+        $q = trim($request->query('q', ''));
+
+        if ($q === '') {
+            return response()->json([]);
+        }
+
+        $results = User::where('pseudo', 'like', "%{$q}%")
+            ->select('id', 'pseudo')
+            ->limit(30)
+            ->get();
+
+        return response()->json($results);
     }
 
     public function destroy()

@@ -49,4 +49,40 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, 300);
 
+  const searchInput = document.getElementById('playerSearchInput');
+  const searchResults = document.getElementById('searchResults');
+  if (searchInput && searchResults) {
+    async function doSearch(q) {
+      if (!q || q.trim() === '') {
+        searchResults.innerHTML = '';
+        return;
+      }
+      try {
+        const res = await fetch('/profil/search?q=' + encodeURIComponent(q));
+        if (!res.ok) throw new Error('Network error');
+        const users = await res.json();
+        if (!users || users.length === 0) {
+          searchResults.innerHTML = '<div style="color:var(--muted);padding:8px 0;">Aucun joueur trouvé.</div>';
+          return;
+        }
+        const html = users.map(u => {
+          return `<a href="/profil/${u.id}" class="match-row" style="display:block;padding:8px 10px;border-radius:6px;text-decoration:none;color:inherit;margin-bottom:6px;background:rgba(255,255,255,0.02)">` +
+            `<div style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:6px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;font-weight:700">${u.pseudo.slice(0,2).toUpperCase()}</div>` +
+            `<div><div style="font-weight:700">${u.pseudo}</div><div style="font-size:.78rem;color:var(--muted)">Voir le profil</div></div></div></a>`;
+        }).join('');
+        searchResults.innerHTML = html;
+      } catch (err) {
+        searchResults.innerHTML = '<div style="color:var(--danger);">Erreur lors de la recherche.</div>';
+      }
+    }
+
+    // déclencher sur Entrée
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        doSearch(searchInput.value);
+      }
+    });
+  }
+
 });
