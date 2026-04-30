@@ -295,7 +295,7 @@
                     @foreach($topScores as $index => $s)
                     <div class="lb-row">
                         <span class="lb-row__rank">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
-                        <span class="lb-row__player"><span class="lb-row__avatar">🎮</span> {{ $s->user->pseudo }}</span>
+                        <span class="lb-row__player"><span class="lb-row__avatar">🎮</span> {{ optional($s->user)->pseudo ?? '—' }}</span>
                         <span class="lb-row__game">{{ $s->game->name ?? $s->jeu ?? '-' }}</span>
                         <span class="lb-row__score" style="color:var(--neon-g)">{{ number_format($s->score) }}</span>
                     </div>
