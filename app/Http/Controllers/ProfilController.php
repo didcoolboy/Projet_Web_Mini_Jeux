@@ -6,6 +6,7 @@ use App\Models\Score;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProfilController extends Controller
 {
@@ -97,10 +98,32 @@ class ProfilController extends Controller
             return response()->json([]);
         }
 
-        $results = User::where('pseudo', 'like', "%{$q}%")
+        $users = User::where('pseudo', 'like', "%{$q}%")
             ->select('id', 'pseudo')
             ->limit(30)
             ->get();
+
+        $results = $users->map(function ($u) {
+            $scores = Score::where('user_id', $u->id)
+                ->select('game_id', DB::raw('MAX(score) as top_score'))
+                ->groupBy('game_id')
+                ->get()
+                ->map(function ($row) {
+                    // attach game name if relation exists
+                    $game = \App\Models\Game::find($row->game_id);
+                    return [
+                        'game_id' => $row->game_id,
+                        'game' => $game ? $game->name : null,
+                        'top_score' => (int) $row->top_score,
+                    ];
+                })->values();
+
+            return [
+                'id' => $u->id,
+                'pseudo' => $u->pseudo,
+                'scores' => $scores,
+            ];
+        });
 
         return response()->json($results);
     }

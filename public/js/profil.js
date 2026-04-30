@@ -66,9 +66,26 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
         const html = users.map(u => {
-          return `<a href="/profil/${u.id}" class="match-row" style="display:block;padding:8px 10px;border-radius:6px;text-decoration:none;color:inherit;margin-bottom:6px;background:rgba(255,255,255,0.02)">` +
-            `<div style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:6px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;font-weight:700">${u.pseudo.slice(0,2).toUpperCase()}</div>` +
-            `<div><div style="font-weight:700">${u.pseudo}</div><div style="font-size:.78rem;color:var(--muted)">Voir le profil</div></div></div></a>`;
+          const scoresHtml = (u.scores && u.scores.length > 0)
+            ? `<div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">` + u.scores.map(s =>
+                `<div style="background:rgba(255,255,255,0.03);padding:6px 8px;border-radius:6px;font-size:.82rem">` +
+                `${s.game ? s.game : '—'}: <strong style="color:var(--neon-g);">${Number(s.top_score).toLocaleString('fr-FR')}</strong>` +
+                `</div>`
+              ).join('') + `</div>`
+            : `<div style="margin-top:8px;color:var(--muted);font-size:.9rem">Aucun score</div>`;
+
+          return `<a href="/profil/${u.id}" class="match-row" style="display:block;padding:8px 10px;border-radius:6px;text-decoration:none;color:inherit;margin-bottom:12px;background:rgba(255,255,255,0.02)">` +
+            `<div style="display:flex;align-items:flex-start;gap:12px">` +
+              `<div style="width:36px;height:36px;border-radius:6px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;font-weight:700">${u.pseudo.slice(0,2).toUpperCase()}</div>` +
+              `<div style="flex:1">` +
+                `<div style="display:flex;align-items:center;justify-content:space-between">` +
+                  `<div style="font-weight:700">${u.pseudo}</div>` +
+                  `<div style="font-size:.78rem;color:var(--muted)">Voir le profil →</div>` +
+                `</div>` +
+                `${scoresHtml}` +
+              `</div>` +
+            `</div>` +
+          `</a>`;
         }).join('');
         searchResults.innerHTML = html;
       } catch (err) {
