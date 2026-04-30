@@ -160,6 +160,7 @@
     @endforelse
   </div>
 
+  
 
   <div class="section-head" style="margin-top:22px;">
     <div class="section-title">Rechercher un joueur</div>
